@@ -51,11 +51,12 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
 
 1.打包公共文件：
     
-	打包公共文件使用DllPlugin插件，在config.js中可配置打包公共文件内容，相应命令为npm run dll，也可直接运行npm run dev，每次都会重新打包dll，打包完成后会在src\static\vendor下生成vendorJS公共文件，编译速度大大提升
+	打包公共文件使用DllPlugin插件，在config.js中可配置打包公共文件选项，相应命令为npm run dll，也可直接运行npm run dev，每次都会重新打包dll，打包完成后会在src\static\vendor下生成vendorJS公共文件，编译速度大大提升
 
 2.fundebug文件打包：
-
-	生成模式下devtool为'hidden-source-map'，因为代码为压缩，debug看不出原始代码结构，而且'hidden-source-map'生成的map文件不会在相对应的js底部注释链接，所以想再生产模式下查看原始代码使用fundebug。
+	
+	相应命令为npm run fundebug
+	生成模式下devtool为'hidden-source-map'，因为代码为压缩，debug看不出原始代码结构，而且'hidden-source-map'生成的map文件不会在相对应的js底部注释链接，所以想再生产模式下查看原始代码需使用fundebug这类监控平台。
 	需要在官网(https://www.fundebug.com/)注册生成apikey，在config.js中配置当前的apikey，再把生产模式下生成的map文件上传到官网中，报错就可以看到报错处对应的原始代码了(要想一直使用官网的Source Map支持功能需要花钱...)。
 	
 2.打包命令
