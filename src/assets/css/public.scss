@@ -1,0 +1,31 @@
+
+* {
+    padding: 0px;
+    margin: 0px;
+    font-size: 14px;
+    font-family: Arial,sans-serif;
+    color: #34495e;
+    word-break: break-word;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent; /* For some Androids,个人感觉是低版本的安卓，4.0以下 */
+    -webkit-overflow-scrolling : touch; 
+}
+
+
+@import './theme_default';
+
+.common_width {
+    width: $common_width;
+    margin: 0 auto;
+}
+
+@media (max-width: $common_width) {
+    .common_width {
+        width: 100%;
+    }
+}
+
+
+[v-cloak] {
+    display: none;
+}

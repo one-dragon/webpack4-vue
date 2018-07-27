@@ -1,0 +1,51 @@
+$common_width: 1200px !default;
+
+
+// lg--≥1920 响应式
+@mixin media-xl() {
+    @media screen and (min-width: 1920px){
+        @content;
+    }
+}
+
+// lg--≥1200 响应式
+@mixin media-lg() {
+    @media screen and (min-width: 1200px) and (max-width: 1919px) {
+        @content;
+    }
+}
+
+// md--≥992 响应式
+@mixin media-md() {
+    @media screen and (min-width: 992px) and (max-width: 1199px) {
+        @content;
+    }
+}
+
+// md及以下尺寸
+@mixin media-md-and-down() {
+    @media screen and (max-width: 1199px) {
+        @content;
+    }
+}
+
+// sm--≥768px 响应式
+@mixin media-sm() {
+    @media screen and (min-width: 768px) and (max-width: 991px) {
+        @content;
+    }
+}
+
+// sm及以下尺寸
+@mixin media-sm-and-down() {
+    @media screen and (max-width: 991px) {
+        @content;
+    }
+}
+
+// xs--<768px 响应式
+@mixin media-xs() {
+    @media screen and (max-width: 767px){
+        @content;
+    }
+}
