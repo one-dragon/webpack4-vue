@@ -40,12 +40,16 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
     
 3.eslintrc.js
 
-    .eslintrc.js为配置eslint内容
+    .eslintrc.js为配置eslint内容，默认在config.js中开启eslint验证
     
 4.config.js
 
     config.js为配置暴露出来的api内容，可以配置开发模式下的端口号、反向代理、入口文件，还有相关webpack配置选项，并且有对应的注解
 
+5.package.json
+	
+	相关依赖安装，和启动编译命令
+	
 
 三、打包
 
@@ -59,7 +63,7 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
 	生成模式下devtool为'hidden-source-map'，因为代码为压缩，debug看不出原始代码结构，而且'hidden-source-map'生成的map文件不会在相对应的js底部注释链接，所以想再生产模式下查看原始代码需使用fundebug这类监控平台。
 	需要在官网(https://www.fundebug.com/)注册生成apikey，在config.js中配置当前的apikey，再把生产模式下生成的map文件上传到官网中，报错就可以看到报错处对应的原始代码了(要想一直使用官网的Source Map支持功能需要花钱...)。
 	
-2.打包命令
+3.打包命令
 
 	npm run server命令为开发模式，直接运行编译。
 	
