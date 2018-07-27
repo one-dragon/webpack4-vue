@@ -59,6 +59,7 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
 	需要在官网(https://www.fundebug.com/)注册生成apikey，在config.js中配置当前的apikey，再把生产模式下生成的map文件上传到官网中，报错就可以看到报错处对应的原始代码了(要想一直使用官网的Source Map支持功能需要花钱...)。
 	
 2.打包命令
+
 	npm run server命令为开发模式，直接运行编译。
 	
 	npm run prod命令为生产模式，直接运行编译。
