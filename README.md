@@ -55,7 +55,7 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
 
 1.打包公共文件：
     
-	打包公共文件使用DllPlugin插件，在config.js中可配置打包公共文件选项，相应命令为npm run dll，也可直接运行npm run dev，每次都会重新打包dll，打包完成后会在src\static\vendor下生成vendorJS公共文件，编译速度大大提升
+	打包公共文件使用DllPlugin插件，在config.js中可配置打包公共文件选项，相应命令为npm run dll，也可直接运行npm run dev，每次都会重新打包dll，打包完成后会在src\static\vendor下生成vendorJS公共文件，提升编译速度
 
 2.fundebug文件打包：
 	
