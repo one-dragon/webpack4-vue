@@ -9,7 +9,7 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
 
 2.安装依赖包
     
-    下载当前工程，cmd打开到当前目录下，输入npm init安装package.json中的依赖(注意npm3.x或以上的版本安装包是平行依赖安装的，如果不想平行安装可以输入npm init --legacy-bundling，当时需要npm为3.x版本)
+    下载当前工程，cmd打开到当前目录下，输入npm init安装package.json中的依赖(注意npm3.x或以上的版本安装包是平行依赖安装的，如果不想平行安装可以输入npm init --legacy-bundling，但是需要npm为3.x版本，可npm降版本至3.x。)
 
 3.输入命令
     
