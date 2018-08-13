@@ -4,10 +4,28 @@ const webpack = require('webpack');
 const { resolve, join, getBabelOptions, createLintingRule, isDev, entryJS } = require('./utils');
 const Options = require('./options');
 const OptionsBuild = Options.build;
-const styleLoader = require('./style-loader');
+const styleLoader = require('./style-loader2');
+//const styleLoader = require('./style-loader');
 const vueLoader = require('./vue-loader');
 const vueLoaderPlugin = require('vue-loader/lib/plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const HappyPack = require('happypack');
+const os = require('os'); //获取电脑的处理器有几个核心，作为配置传入
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length - 1 });
+// 调用happypack函数
+const HappyPackFun = (id, loaders) => {
+    return new HappyPack({
+        // 用id来标识 happypack处理那里类文件
+        id: id,
+        // 如何处理  用法和loader的配置一样
+        loaders: loaders,
+        // 共享进程池
+        threadPool: happyThreadPool,
+        // 允许 HappyPack 输出日志
+        verbose: true,
+    })
+}
 
 
 const baseConfig = {
@@ -36,13 +54,22 @@ const baseConfig = {
     		...(OptionsBuild.useEslint ? [createLintingRule()] : []),
     		{
                 test: /\.vue$/,
+                /*
                 use: (isDev ? [] : [{ loader: 'thread-loader' }]).concat([
                 	{
                 		loader: 'vue-loader',
                 		options: vueLoader,
                 	}
                 ])
+                */
+                use: [
+                    {
+                        loader: 'vue-loader',
+                        options: vueLoader,
+                    }
+                ]
            	},
+           	/*
 	        {
 	            test: /\.jsx?$/,
 	           	use: (isDev ? [] : [{ loader: 'thread-loader' }]).concat([
@@ -62,6 +89,15 @@ const baseConfig = {
 	           	? OptionsBuild.babelInclude
 	           	: [ resolve(__dirname, '../src') ]
 	        },
+	        */
+	        {
+                test: /\.jsx?$/,
+                use: 'happypack/loader?id=js',
+                //exclude: [ resolve(__dirname, '../src/static') ],
+                include:  Array.isArray(OptionsBuild.babelInclude) && OptionsBuild.babelInclude.length > 0 
+                ? OptionsBuild.babelInclude
+                : [ resolve(__dirname, '../src') ]
+            },
 	        {
         		test: /\.json$/,
         		loader: 'json-loader'
@@ -90,6 +126,7 @@ const baseConfig = {
                 test: /\.scss$/, 
                 use: styleLoader.call(this, 'scss', 'sass-loader'),
             },
+            
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
                 loader: 'url-loader',
@@ -116,6 +153,72 @@ const baseConfig = {
     	]
     },
     plugins: [
+        
+        // 采用多进程去打包构建--eslint
+        ...(OptionsBuild.useEslint ? [
+            HappyPackFun('eslint', [
+                {
+                    loader: 'eslint-loader',
+                    options: {
+                        formatter: require('eslint-friendly-formatter'),
+                        // emitWarning: false
+                    }
+                }
+            ]),
+        ] : []),
+        // 采用多进程去打包构建--js
+        HappyPackFun('js', [
+            {
+                loader: 'cache-loader',
+                options: {
+                    cacheDirectory: resolve('node_modules/.cache/cacheLoaderJS')
+                }
+            },
+            {
+                loader: 'babel-loader',
+                options: getBabelOptions()
+            }
+        ]),
+        // 采用多进程去打包构建--css
+        HappyPackFun('css', [
+            {
+                loader: 'css-loader',
+                options: {
+                    sourceMap: isDev,
+                    importLoaders: 1, // Important!
+                    // 将来可能会取消该选项， 用optimize-css-assets-webpack-plugin代替
+                    //minimize: !sourceMap
+                }
+            }
+        ]),
+        // 采用多进程去打包构建--less
+        HappyPackFun('less', [
+            {
+                loader: 'less-loader',
+                options: {
+                    sourceMap: isDev,
+                }
+            }
+        ]),
+        // 采用多进程去打包构建--sass
+        HappyPackFun('sass', [
+            {
+                loader: 'sass-loader',
+                options: {
+                    indentedSyntax: true,
+                    sourceMap: isDev,
+                }
+            }
+        ]),
+        // 采用多进程去打包构建--scss
+        HappyPackFun('scss', [
+            {
+                loader: 'sass-loader',
+                options: {
+                    sourceMap: isDev,
+                }
+            }
+        ]),
     	
     	// 启用Dll
     	new webpack.DllReferencePlugin({

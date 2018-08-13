@@ -10,6 +10,11 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const chalk = require('chalk');
+
+const glob = require('glob-all');
+const PurifyCSSPlugin = require('purifycss-webpack');
 
 const prodConfig = merge(baseConfig, {
 	mode: 'production',
@@ -66,7 +71,7 @@ const prodConfig = merge(baseConfig, {
         }),
         */
         
-        
+        /*
         // 显示构建进度
         new webpack.ProgressPlugin((percentage, msg) => {
             const readline = require('readline');
@@ -74,6 +79,17 @@ const prodConfig = merge(baseConfig, {
             readline.clearLine(process.stdout);
             console.log('  ' + (percentage * 100).toFixed(2) + '%', msg);
             readline.moveCursor(process.stdout, 0, -1);
+        }),
+        */
+        
+        
+        // 打包过程，以百分比显示打包进度
+        new ProgressBarPlugin({
+            complete: chalk.green('█'),
+            incomplete: chalk.white('█'),
+            format: '  build :bar ' + chalk.green.bold(':percent') + ' :msg',
+            //format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
+            clear: false
         }),
         
         // 删除文件
@@ -93,6 +109,12 @@ const prodConfig = merge(baseConfig, {
             chunkFilename: 'css/[name].[contenthash:3].css'
     	}),
     	
+    	// 用于css的tree-shaking，去掉没有使用的css样式
+    	new PurifyCSSPlugin({
+            // Give paths to parse for rules. These should be absolute!
+            paths: glob.sync(join(__dirname, '../src/app/*.html')),
+        }),
+        
         // 会根据模块的相对路径生成一个几位数的hash作为模块id
         new webpack.HashedModuleIdsPlugin(),
     ],

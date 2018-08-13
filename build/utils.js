@@ -50,6 +50,7 @@ exports.getBabelOptions = () => {
 
 // eslint配置
 exports.createLintingRule = () => ({
+    /*
     test: /\.(js|vue)$/,
     loader: 'eslint-loader',
     enforce: 'pre',
@@ -58,6 +59,12 @@ exports.createLintingRule = () => ({
         formatter: require('eslint-friendly-formatter'),
         // emitWarning: false
     }
+    */
+    // 使用happypack
+    test: /\.(js|vue)$/,
+    enforce: 'pre',
+    use: 'happypack/loader?id=eslint',
+    include: [ resolve(__dirname, '../src') ]
 })
 
 

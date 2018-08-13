@@ -53,6 +53,9 @@ module.exports = {
             publicPath: '',
         },
         
+        // 开发环境下默认打开地址为http://host:port/ 指向目录下的index.html，可修改为打开其他页面
+        openPage: 'index.html',
+        
         // 设置入口html文件和对应的js文件，默认指向src文件夹路径('./src')
         entry: [
             {
@@ -81,6 +84,6 @@ module.exports = {
     // 开发模式下访问地址
     local: {
         host: 'localhost',
-        port: 8000
+        port: 9000
     },
 }

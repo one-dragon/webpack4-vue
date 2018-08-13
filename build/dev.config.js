@@ -6,10 +6,12 @@ const Options = require('./options');
 const { getDllVendor, isDev, join, entryHtml } = require('./utils');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
-const OpenBrowserPlugin = require('open-browser-webpack-plugin');
+const OpenBrowserPlugin = require('open-browser-webpack4-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const chalk = require('chalk');
 
 const devConfig = merge(baseConfig, {
-   	mode: 'development',
+    mode: 'development',
     // cheap-module-eval-source-map is faster for development
 	//devtool: 'cheap-module-eval-source-map',
 	devtool: 'cheap-source-map',
@@ -22,7 +24,7 @@ const devConfig = merge(baseConfig, {
         compress: false,
         hot: true,
         inline: true,
-        progress: true,
+        //progress: true,
         stats: { colors: true },
         quiet: true, // necessary for FriendlyErrorsPlugin
         overlay: {
@@ -58,6 +60,15 @@ const devConfig = merge(baseConfig, {
         }),
        	*/
        	
+       	
+       	// 打包过程，以百分比显示打包进度
+        new ProgressBarPlugin({
+            complete: chalk.green('█'),
+            incomplete: chalk.white('█'),
+            format: '  :bar ' + chalk.green.bold(':percent') + ' :msg',
+            //format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
+            clear: false
+        }),
         
         // 启用热替换模块(Hot Module Replacement)，也被称为 HMR。
         new webpack.HotModuleReplacementPlugin(),
@@ -68,7 +79,7 @@ const devConfig = merge(baseConfig, {
         // 编译完成， 成功、失败提示
         new FriendlyErrorsPlugin({
             compilationSuccessInfo: {
-                messages: [`Your application is running here: http://${Options.local.host}:${Options.local.port}`],
+                messages: [`Your application is running here: http://${Options.local.host}:${Options.local.port}/${Options.build.openPage}`],
             },
 			onErrors: (severity, errors) => {
 		      	if (severity !== 'error') {
@@ -88,7 +99,7 @@ const devConfig = merge(baseConfig, {
         
         // 编译完成，自动打开浏览器
         new OpenBrowserPlugin({
-            url: `http://${Options.local.host}:${Options.local.port}/`,
+            url: `http://${Options.local.host}:${Options.local.port}/${Options.build.openPage}`,
         }),
     ]
 })
