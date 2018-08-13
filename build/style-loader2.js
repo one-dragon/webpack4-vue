@@ -5,17 +5,11 @@ const postcssConfig = require('./postcss');
 module.exports = (ext, loaders = [], isVueLoader = false) => {
     const sourceMap = isDev;
     
-//  loaders = (Array.isArray(loaders) ? loaders : [loaders]).map((loader) => {
-//      return Object.assign(
-//          { options: { sourceMap } },
-//          typeof loader === 'string' ? { loader } : loader
-//      )
-//  })
-    let is = false; 
+    let isHappypack = false; 
     if(JSON.stringify(loaders) != '[]') {
         loaders = [`happypack/loader?id=${ext}`]
     }else {
-        is = true;
+        isHappypack = true;
     }
     
     const vueStyleLoader = {
@@ -33,7 +27,7 @@ module.exports = (ext, loaders = [], isVueLoader = false) => {
         options: postcssConfig(),
     })
     
-    if(is) {
+    if(isHappypack) {
         loaders.unshift('happypack/loader?id=css');
     }else {
         loaders.unshift({
@@ -46,16 +40,6 @@ module.exports = (ext, loaders = [], isVueLoader = false) => {
             }
         })
     }
-//  loaders.unshift({
-//      loader: 'css-loader',
-//      options: {
-//          sourceMap,
-//          importLoaders: loaders.length, // Important!
-//          // 将来可能会取消该选项， 用optimize-css-assets-webpack-plugin代替
-//          //minimize: !sourceMap
-//      }
-//  })
-//  loaders.unshift('happypack/loader?id=css')
     
     if(!sourceMap) {
         loaders.unshift(MiniCssExtractPlugin.loader);
@@ -67,6 +51,6 @@ module.exports = (ext, loaders = [], isVueLoader = false) => {
         loader: 'css-hot-loader',
         options: { sourceMap }
     }
-    //console.log(loaders)
+    
     return sourceMap ? [hotLoader].concat(loaders) : loaders;
 }

@@ -10,8 +10,8 @@ const options = merge({
         
         // 打包进行扩展配置，config参数为当前webpack返回配置内容，如果你想使用vux移动ui库可在此选项下配置
         extend: (config, { isDev }) => {
-            // config.plugins.push();
-            // return config;
+            //config.plugins.push();
+            //return config;
         },
         
         // 设置babel-loader里的include选项，默认为include为src目录[ path.resolve(__dirname, '../src') ]

@@ -11,7 +11,8 @@ const vueLoaderPlugin = require('vue-loader/lib/plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const HappyPack = require('happypack');
-const os = require('os'); //获取电脑的处理器有几个核心，作为配置传入
+// 获取电脑的处理器有几个核心，作为配置传入
+const os = require('os'); 
 const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length - 1 });
 // 调用happypack函数
 const HappyPackFun = (id, loaders) => {
@@ -54,42 +55,13 @@ const baseConfig = {
     		...(OptionsBuild.useEslint ? [createLintingRule()] : []),
     		{
                 test: /\.vue$/,
-                /*
-                use: (isDev ? [] : [{ loader: 'thread-loader' }]).concat([
-                	{
-                		loader: 'vue-loader',
-                		options: vueLoader,
-                	}
-                ])
-                */
                 use: [
                     {
                         loader: 'vue-loader',
                         options: vueLoader,
                     }
                 ]
-           	},
-           	/*
-	        {
-	            test: /\.jsx?$/,
-	           	use: (isDev ? [] : [{ loader: 'thread-loader' }]).concat([
-		          	{
-		            	loader: 'cache-loader',
-		            	options: {
-		              		cacheDirectory: resolve('node_modules/.cache/cacheLoaderJS')
-		            	}
-		          	},
-		          	{
-		          		loader: 'babel-loader',
-		          		options: getBabelOptions()
-		          	}
-		        ]),
-		        //exclude: [ resolve(__dirname, '../src/static') ],
-	           	include:  Array.isArray(OptionsBuild.babelInclude) && OptionsBuild.babelInclude.length > 0 
-	           	? OptionsBuild.babelInclude
-	           	: [ resolve(__dirname, '../src') ]
-	        },
-	        */
+            },
 	        {
                 test: /\.jsx?$/,
                 use: 'happypack/loader?id=js',
