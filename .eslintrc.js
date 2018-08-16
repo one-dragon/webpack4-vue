@@ -42,11 +42,32 @@ module.exports = {
             "error"或者2    //把规则作为一个错误（退出代码触发时为1） 
         */
         
+        // 允许在条件表达式中使用赋值语句
+        'no-cond-assign': 0,
+        
+        // 换行时运算符在行尾还是行首
+        'operator-linebreak': [2, 'after'],
+        
+        // 必须使用全等
+        'eqeqeq': 0,
+        
+        // 确保关键字前后空格的一致性
+        'keyword-spacing': 0,
+        
+        // 一元运算符的前/后要不要加空格
+        'space-unary-ops': [0, { words: true, nonwords: false }],
+        
+        // 不以新行开始的块{前面要不要有空格
+        'space-before-blocks': [0, 'always'],
+        
         // 语句强制分号结尾
         'semi': 0,
         
         // 生成器函数*的前后空格
         'generator-star-spacing': 0,
+        
+        // 禁止无用的表达式 a && a.b
+        'no-unused-expressions': 0, 
         
         // 缩进风格
         'indent': [2, 4],
