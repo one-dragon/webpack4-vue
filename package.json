@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "cross-env NODE_ENV=development webpack-dev-server --inline --display-error-details --config build/dev.config.js",
     "prod": "cross-env NODE_ENV=production webpack --colors --hide-modules --config build/prod.config.js",
+	"dll-dev": "cross-env NODE_ENV=development webpack --colors  --progress --config build/dll.config.js",
     "dll-build": "cross-env NODE_ENV=production webpack --colors  --progress --config build/dll.config.js",
-    "dll-dev": "cross-env NODE_ENV=development webpack --colors  --progress --config build/dll.config.js",
     "fundebug": "cross-env NODE_ENV=production webpack --colors  --progress --config build/fundebug.config.js",
     "dev": "npm run dll-dev && npm run server",
     "build": "cross-env NODE_ENV=production node build/build.js"
