@@ -8,28 +8,41 @@ window.Promise = Promise;
 // 加载css
 require('~/assets/css/public');
 
+
 import Vue from 'vue';
-import router from '~/router';
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(Element);
+
+import Index from '~/pages/index';
+import router, { routes } from '~/router';
 import i18n from '~/i18n';
 import store from '~/store';
-import ajax from '~/assets/js/ajax';
-Vue.use(ajax);
+
+
+import '~/assets/js/ajax';// ajax加载
+import permission from '~/assets/js/permission';// 权限加载
+permission(router, routes);
+
+
+Vue.config.productionTip = false;
 
 new Vue({
     el: '#app',
     data: {},
     mounted() {
-        let data = {};
-        data.host = 'sit.cuniq.com';
-        data.region = '/hk';
-        data.acceptPortal = 1;
-        data.langId = 1;
-        this.$get( '/cq-ocms/site/detailMobile', data, (d) => {
-            console.log('d')
-            console.log(d)
-        })
+        // let data = {};
+        // data.host = 'sit.cuniq.com';
+        // data.region = '/hk';
+        // data.acceptPortal = 1;
+        // data.langId = 1;
+        // this.$get( '/cq-ocms/site/detailMobile', data, (d) => {
+        // console.log('d')
+        // console.log(d)
+        // })
     },
     router,
     i18n,
-    store
+    store,
+    render: h => h(Index)
 })

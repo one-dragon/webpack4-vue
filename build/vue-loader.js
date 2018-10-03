@@ -7,7 +7,7 @@ module.exports = {
     extractCSS: !isDev,
     cssSourceMap: isDev,
     preserveWhitespace: false,
-    hotReload: false,
+    hotReload: true,
     // 设置为 true 的时候会开启基于文件系统的选项缓存，使得主 vue-loader 的选项可以分享给其它线程中的子 loader。只在和 HappyPack 或 thread-loader 配合使用的时候才用得到。
     threadMode: true,
     loaders: {

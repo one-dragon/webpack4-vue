@@ -110,10 +110,10 @@ const prodConfig = merge(baseConfig, {
     	}),
     	
     	// 用于css的tree-shaking，去掉没有使用的css样式
-    	new PurifyCSSPlugin({
-            // Give paths to parse for rules. These should be absolute!
-            paths: glob.sync(join(__dirname, '../src/app/*.html')),
-        }),
+    	// new PurifyCSSPlugin({
+            // // Give paths to parse for rules. These should be absolute!
+            // paths: glob.sync(join(__dirname, '../src/app/*.html')),
+        // }),
         
         // 会根据模块的相对路径生成一个几位数的hash作为模块id
         new webpack.HashedModuleIdsPlugin(),

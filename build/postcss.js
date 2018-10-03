@@ -16,7 +16,7 @@ module.exports = function postcssConfig(isArr) {
         // require('postcss-url')();
         // require('postcss-cssnext')(),
         // require('cssnano')({ safe: true }),
-        require('autoprefixer')({browsers:'last 5 versions'}),
+        require('autoprefixer')({browsers: ['last 5 versions', 'Firefox >= 51']}),
     ]
     return {
         sourceMap: isDev,

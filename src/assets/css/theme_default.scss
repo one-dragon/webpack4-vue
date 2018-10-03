@@ -1,5 +1,15 @@
+
+// 公共宽度
 $common_width: 1200px !default;
 
+// sidebar宽度
+$sidebar_width: 160px !default;
+
+// 隐藏sidebar的宽度
+$hide_sidebar_width: 56px !default;
+
+// sidebar中的图标宽度
+$sidebar_ico_width: 14px !default;
 
 // lg--≥1920 响应式
 @mixin media-xl() {

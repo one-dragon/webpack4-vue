@@ -9,14 +9,17 @@
                     <h2 class="vue hidden-md-and-up">Vue.js</h2>
                     <h1>渐进式<br>JavaScript 框架</h1>
                     <div class="but_box">
-                        <a href="https://cn.vuejs.org/" target="_blank">
+                        <!--<a href="https://cn.vuejs.org/" target="_blank">
                             <el-button type="success" round>WHY VUE.JS?</el-button>
-                        </a>
+                        </a>-->
                         <a href="https://cn.vuejs.org/v2/guide/" target="_blank">
                             <el-button type="success" round>起步</el-button>
                         </a>
                         <a href="https://github.com/vuejs/vue" target="_blank">
                             <el-button type="success" round>GITHUB</el-button>
+                        </a>
+                        <a href="demo.html" target="_blank">
+                            <el-button type="success" round>DEMO</el-button>
                         </a>
                     </div>
                 </el-col>
@@ -66,6 +69,9 @@
         .but_box > a:nth-child(2){
             margin: 0 10px;
         }
+        /*.but_box > a:last-child{
+            margin-left: 10px;
+        }*/
         .el-button{
             margin-top: 15px;
             transition: all 0.15s ease;

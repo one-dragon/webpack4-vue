@@ -50,7 +50,7 @@ module.exports = {
             // str 'js/[name].js' / fun (isDev) => { return isDev ? 'js/[name].js' : 'js/[name].[chunkhash:3].js' }
             chunkFilename: '',
             // npm run build时设置访问路径，默认为'/'
-            publicPath: '',
+            publicPath: '/',
         },
         
         // 开发环境下默认打开地址为http://host:port/ 指向目录下的index.html，可修改为打开其他页面
@@ -59,26 +59,28 @@ module.exports = {
         // 设置入口html文件和对应的js文件，默认指向src文件夹路径('./src')
         entry: [
             {
+                html: '/app/login.html',
+                js: '/app/login.js',
+            },
+            {
                 html: '/app/index.html',
                 js: '/app/index.js',
             },
             {
-                html: '/app/test.html',
-                js: '/app/test1.js',
+                html: '/app/demo.html',
+                js: '/app/demo.js',
             }
         ]
     },
     
     // 开发模式下配置反向代理
     proxy: {
-        /*
         '/cq-ocms': {
-            target: 'https://www.cuniq.com',
+            target: 'http://sit.cuniq.com',
             changeOrigin: true,
             secure: false,
             //pathRewrite: { '^/cq-ocms' : '/' }
         },
-        */
     },
     
     // 开发模式下访问地址

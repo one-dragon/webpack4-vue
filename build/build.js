@@ -70,12 +70,12 @@ let fundebugConfigPack = (callback) => {
 
 // build生成打包
 let prodConfigPack = () => {
-//	const spinner = ora('building for production...\n');
-//	spinner.start();
+    // const spinner = ora('building for production...\n');
+    // spinner.start();
 	const prodPromise = require('./prod.config');
 	prodPromise.then((prodConfig) => {
 		webpack(prodConfig, (err, stats) => {
-//			spinner.stop();
+            // spinner.stop();
 			
 			if (err) {
 				console.log(chalk.red(err.message))

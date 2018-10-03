@@ -4,10 +4,11 @@ const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const Options = require('./options');
-const { resolve, join } = require('./utils');
+const { resolve, join, isDev } = require('./utils');
 
 module.exports = {
-   	mode: 'production',
+    mode: isDev ? 'development' : 'production',
+    // mode: 'production',
     entry: {
         vendor: Array.from(new Set(['vue', 'axios', 'vue-router', 'vuex'].concat(Options.build.vendor)))
     },
@@ -28,7 +29,7 @@ module.exports = {
         new CleanWebpackPlugin(
             ['src/static/vendor'],                      // 匹配删除的文件
             {
-                root: join(__dirname, '..'),       		// 根目录
+                root: join(__dirname, '..'),            // 根目录
                 verbose: true,                          // 开启在控制台输出信息
                 dry: false,                             // 启用删除文件
             }
@@ -60,25 +61,36 @@ module.exports = {
                     comments: false //不保留注释
                 },
                 compress: {
-			        warnings: false, // 在UglifyJs删除没有用到的代码时不输出警告
+                    warnings: false, // 在UglifyJs删除没有用到的代码时不输出警告
                     drop_console: true, // 删除所有的 `console` 语句，可以兼容ie浏览器
                     collapse_vars: true, // 内嵌定义了但是只用到一次的变量
                     reduce_vars: true // 提取出出现多次但是没有定义成变量去引用的静态值
-			    },
+                },
                 // mangle: {
                 //    except: ['$super', '$', 'exports', 'require']
                 // }
             }
         }),
-		*/
+        */
     ],
-    optimization: {
-    	minimizer: [
-      		new UglifyJSPlugin({
-        		cache: 'node_modules/.cache/dll-uglifyjs-webpack-plugin',
-		        parallel: true,
-		        sourceMap: true
-	      	})
-    	]
-  	},
+    // optimization: {
+        // minimizer: [
+            // new UglifyJSPlugin({
+                // cache: 'node_modules/.cache/dll-uglifyjs-webpack-plugin',
+                // parallel: true,
+                // sourceMap: true
+            // })
+        // ]
+    // },
+    ...(isDev ? {} : {
+        optimization: {
+            minimizer: [
+                new UglifyJSPlugin({
+                    cache: 'node_modules/.cache/dll-uglifyjs-webpack-plugin',
+                    parallel: true,
+                    sourceMap: true
+                })
+            ]
+        }
+    })
 };

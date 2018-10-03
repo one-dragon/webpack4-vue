@@ -16,7 +16,7 @@ exports.isDev = isDev;
 exports.getBabelOptions = () => {
     const Options = require('./options');
     let obj = Object.assign(
-        {}, 
+        { plugins: [] }, 
         {
             babelrc: false,
             //cacheDirectory: true,
@@ -64,7 +64,8 @@ exports.createLintingRule = () => ({
     test: /\.(js|vue)$/,
     enforce: 'pre',
     use: 'happypack/loader?id=eslint',
-    include: [ resolve(__dirname, '../src') ]
+    // include: [ resolve(__dirname, '../src') ]
+    exclude: [ resolve(__dirname, '../src/static') ]
 })
 
 
@@ -119,6 +120,7 @@ exports.entryHtml = (config, resolve) => {
 		        chunksSortMode: 'none',
 		        chunks: ['manifest', 'babel-runtime', jsName],
 		    }
+			// 生成模式
 			if(!isDev) {
 		    	htmlOptions.minify = {				//压缩HTML文件
 		    		removeComments: true,           //移除HTML中的注释
@@ -131,7 +133,7 @@ exports.entryHtml = (config, resolve) => {
                 if(Options.build.useFundebug) {
                 	htmlOptions.jsFundebug = `<script src="${Options.build.output.publicPath || '/'}static/fundebug/fundebug.js" apikey="${Options.build.useFundebug}"></script>`;
                 }
-		    }else{
+		    }else{// 开发模式
 		    	htmlOptions.jsVendor = jsVendor 
 	            ? `<script src="http://${Options.local.host}:${Options.local.port}/static/vendor/${jsVendor}"></script>` 
 	            : '';

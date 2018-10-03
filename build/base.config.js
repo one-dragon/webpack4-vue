@@ -98,14 +98,22 @@ const baseConfig = {
                 test: /\.scss$/, 
                 use: styleLoader.call(this, 'scss', 'sass-loader'),
             },
-            
+            {
+                test: /\.svg$/,
+                loader: 'svg-sprite-loader',
+                options: {
+                    symbolId: 'icon-[name]'
+                },
+                include: resolve(__dirname, '../src/assets/icons_svg')
+            },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
                 loader: 'url-loader',
                 options: {
                     limit: 1000, // 1KO
                     name: 'img/[name].[hash:7].[ext]'
-                }
+                },
+                exclude: resolve(__dirname, '../src/assets/icons_svg')
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,

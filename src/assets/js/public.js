@@ -1,8 +1,10 @@
 import axios from 'axios';
 import { TIPS_TIEM } from '~/assets/js/const';
 import { Loading, Message } from 'element-ui';
+import md5 from 'blueimp-md5';
 // ajax请求封装
 // axios.defaults.baseURL = process.env.HOST ? 'http://' + process.env.HOST + ':' + process.env.PORT : '';
+axios.defaults.headers.common['Token'] = sessionStorage.getItem('token') || '';// 设置请求头token
 let loadingInstance = null;
 class $v {
     static get(url, json, success, error, loadingText) {
@@ -14,13 +16,15 @@ class $v {
             }else {
                 config.params = json;
             }
-            Object.assign(config.params, $v.commonParam());
+            // Object.assign(config.params, $v.commonParam());
+            config.params = $v.commonParam({ method: 'get', data: config.params });
         }
         if(typeof(json) == 'function') {
             loadingText = loadingText || error;
             error = error || success;
             success = json;
-            config.params = $v.commonParam();
+            // config.params = $v.commonParam();
+            config.params = $v.commonParam({ method: 'get', data: config.params });
         }
         if(typeof(error) == 'string') {
             loadingText = loadingText || error;
@@ -44,13 +48,15 @@ class $v {
             }else {
                 config.params = json;
             }
-            Object.assign(config.params, $v.commonParam());
+            // Object.assign(config.params, $v.commonParam());
+            config.params = $v.commonParam({ method: 'get', data: config.params });
         }
         if(typeof(json) == 'function') {
             loadingText = loadingText || error;
             error = error || success;
             success = json;
-            config.params = $v.commonParam();
+            // config.params = $v.commonParam();
+            config.params = $v.commonParam({ method: 'get', data: config.params });
         }
         if(typeof(error) == 'string') {
             loadingText = loadingText || error;
@@ -88,7 +94,8 @@ class $v {
             error = false;
         }
         // 发送请求
-        return axios.post($v.commonParam(url), data, config).then((d) => {
+        // return axios.post($v.commonParam(url), data, config).then((d) => {
+        return axios.post($v.commonParam({ method: 'post', url: url }), $v.commonParam({ method: 'post', data: data }), config).then((d) => {
             let data = d.data;
             // 调用处理结果函数
             $v.resultHandle(data, success, error, loadingText, url)
@@ -119,7 +126,8 @@ class $v {
             error = false;
         }
         // 发送请求
-        return axios.put($v.commonParam(url), data, config).then((d) => {
+        // return axios.put($v.commonParam(url), data, config).then((d) => {
+        return axios.post($v.commonParam({ method: 'post', url: url }), $v.commonParam({ method: 'post', data: data }), config).then((d) => {
             let data = d.data;
             // 调用处理结果函数
             $v.resultHandle(data, success, error, loadingText, url)
@@ -128,6 +136,17 @@ class $v {
         })
     }
     // 设置出入公共参数
+    static commonParam({ data, url }) {
+        if(data) {
+            const key = md5(JSON.stringify(data));
+            data.key = key;
+            return data;
+        }
+        if(url) {
+            return url;
+        }
+    }
+    /*
     static commonParam(url) {
         let sessionId = '';
         let lang = '';
@@ -148,6 +167,7 @@ class $v {
             return url + `${_str}sessionId=${sessionId}&lang=${lang}&token=${token}`;
         }
     }
+    */
     // 处理ajax请求成功结果
     static resultHandle(data, success, error, loadingText, url) {
         try {

@@ -4,6 +4,8 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import M1 from './modules/m1';
+import tagsView from './modules/tagsView';
+import sideBar from './modules/sideBar';
 
 export default new Vuex.Store({
     state: {
@@ -18,6 +20,8 @@ export default new Vuex.Store({
         // { commit, dispatch }
     },
     modules: {
-        M1
+        M1,
+        tagsView,
+        sideBar
     }
 })

@@ -10,8 +10,104 @@
     -webkit-tap-highlight-color: transparent; /* For some Androids,个人感觉是低版本的安卓，4.0以下 */
     -webkit-overflow-scrolling : touch; 
 }
+button,
+input {
+    outline: none;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+img {
+    border: none;
+}
+
+ul,
+li {
+    list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: normal
+}
+
+//address,
+//caption,
+//cite,
+//code,
+//dfn,
+//em,
+//i,
+//strong,
+//th,
+//var {
+//  font-style: normal !important;
+//  font-weight: normal;
+//}
+em,
+i {
+    font-style: normal;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
 
 
+/**********-公共类名-**********/
+
+// 浮动
+.fr {
+  float: right;
+}
+.fl {
+  float: left;
+}
+
+/*隐藏*/
+.hidden {
+    display: none !important;
+}
+
+.show {
+    display: block !important;
+}
+
+.hidden2 {
+    visibility: hidden !important;
+}
+
+.show2 {
+    visibility: visible !important;
+}
+
+/*清除浮动*/
+.clear_fix:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+[v-cloak] {
+    display: none;
+}
+
+
+@import './transition';
 @import './theme_default';
 
 .common_width {
@@ -23,9 +119,4 @@
     .common_width {
         width: 100%;
     }
-}
-
-
-[v-cloak] {
-    display: none;
 }
