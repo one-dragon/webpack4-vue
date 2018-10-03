@@ -17,7 +17,7 @@ const actions = {
 //  setData({commit, dispatch}, arr) {
 //      commit('SET_DATA', arr);
 //  },
-    setData({commit}, arr) {
+    setData({ commit }, arr) {
         commit('SET_DATA', arr);
     }
 }
