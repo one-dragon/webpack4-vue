@@ -68,14 +68,16 @@ webpack4 + Vue2全家桶(vue-router、vuex、vue-i18n)配合axios请求插件搭
 	npm run server命令为开发模式，直接运行编译。
 	
 	npm run prod命令为生产模式，直接运行编译。
+    
+    npm run dll-dev命令为开发模式下的打包公共文件，该文件不会被压缩且是开发模式，vue库提示报错信息明确友好，生成目录为src\static\vendor\vendor.js。
 	
-	npm run dll命令为打包公共文件，生成目录为src\static\vendor\vendor.js。
+	npm run dll-build命令为生产模式下打包公共文件，该文件会被压缩且是生产模式，生成目录为src\static\vendor\vendor.js。
 	
 	npm run fundebug命令为打包fundebug文件，生成目录为src\static\fundebug\fundebug.js。
 	
-    npm run dev命令为开发模式，该命令会先打包公共文件后再正常编译，每次修改代码都会自动编译并自动刷新页面，打包的内容都在内存之中，目录中是看不到的，基于webpack-dev-server插件的，还可以在config.j里配置反向代理(跨域请求ajax)、开发地址等。
+    npm run dev命令为开发模式，该命令会先打包开发模式下的公共文件后再正常编译，每次修改代码都会自动编译并自动刷新页面，打包的内容都在内存之中，目录中是看不到的，基于webpack-dev-server插件的，还可以在config.j里配置反向代理(跨域请求ajax)、开发地址等。
     
-    npm run build命令为生产模式，该命令会先打包公共文件和fundebug后再正常编译，打包完成后会在目录中生成dist文件夹，该文件夹内容都是压缩版的，可以放到服务器中。
+    npm run build命令为生产模式，该命令会先打包生产模式下的公共文件和fundebug后再正常编译，打包完成后会在目录中生成dist文件夹，该文件夹内容都是压缩版的，可以放到服务器中。
 
 
 四、相关技术文档
