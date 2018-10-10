@@ -14,7 +14,7 @@ module.exports = {
     },
     output: {
         path: resolve(__dirname, '../src/static'),
-        filename: 'vendor/[name].[chunkhash:3].js',
+        filename: isDev ? 'vendor/[name].js' : 'vendor/[name].[chunkhash:3].js',
         library: '[name]_library'
     },
     resolve: {
