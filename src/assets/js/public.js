@@ -1,242 +1,414 @@
 import axios from 'axios';
-import { TIPS_TIEM } from '~/assets/js/const';
-import { Loading, Message } from 'element-ui';
+import { Loading, MessageBox } from 'element-ui';
 import md5 from 'blueimp-md5';
 // ajax请求封装
 // axios.defaults.baseURL = process.env.HOST ? 'http://' + process.env.HOST + ':' + process.env.PORT : '';
-axios.defaults.headers.common['Token'] = sessionStorage.getItem('token') || '';// 设置请求头token
+axios.defaults.headers.common['Token'] = sessionStorage.getItem('token') || ''; // 设置请求头token
 let loadingInstance = null;
+const defaultParams = { isLoading: true, isSuccessPrompt: false, isFailPrompt: true };
 class $v {
-    static get(url, json, success, error, loadingText) {
-        loadingInstance = Loading.service({ fullscreen: true, text: loadingText || '' });
+    // { isLoading: true, isSuccessPrompt: false, isFailPrompt: true }
+    static get(url, json, success, error, dataParams) {
+        // 定义dataParams参数内容
+        dataParams = Object.assign({}, defaultParams, dataParams);
+        // 判断传参
         let config = {};
-        if(typeof json == 'object') {
-            if(json.params) {
+        if (typeof json == 'object') {
+            if (json.params) {
                 config = json;
-            }else {
+            } else {
                 config.params = json;
             }
-            // Object.assign(config.params, $v.commonParam());
-            config.params = $v.commonParam({ method: 'get', data: config.params });
+            config.params = $v.commonParam({
+                method: 'get',
+                data: config.params
+            });
         }
-        if(typeof(json) == 'function') {
-            loadingText = loadingText || error;
-            error = error || success;
+        if (typeof (json) == 'function') {
+            // error = error || success;
+            if(typeof (error) == 'object') {
+                dataParams = Object.assign({}, dataParams, error);
+            }
+            error = success || error;
             success = json;
-            // config.params = $v.commonParam();
-            config.params = $v.commonParam({ method: 'get', data: config.params });
+            config.params = $v.commonParam({
+                method: 'get',
+                data: config.params
+            });
         }
-        if(typeof(error) == 'string') {
-            loadingText = loadingText || error;
+        if(typeof (error) == 'object') {
+            dataParams = Object.assign({}, dataParams, error);
             error = false;
+        }
+        // 判断是否加载loading
+        if(dataParams.isLoading) {
+            loadingInstance = Loading.service({
+                fullscreen: true,
+                text: typeof (dataParams.isLoading) == 'string' ? dataParams.isLoading : ''
+            });
         }
         // 发送请求
         return axios.get(url, config).then((d) => {
             let data = d.data;
             // 调用处理结果函数
-            $v.resultHandle(data, success, error, loadingText, url)
-        }).catch((error) => {
-            $v.errorHandle(loadingInstance, error);
+            $v.resultHandle(data, success, error, dataParams, url);
+        }).catch((catchError) => {
+            $v.errorHandle(error, dataParams, url, catchError);
         })
     }
-    static delete(url, json, success, error, loadingText) {
-        loadingInstance = Loading.service({ fullscreen: true, text: loadingText || '' });
+    static delete(url, json, success, error, dataParams) {
+        // 定义dataParams参数内容
+        dataParams = Object.assign({}, defaultParams, dataParams);
+        // 判断传参
         let config = {};
-        if(typeof(json) == 'object') {
-            if(json.params) {
+        if (typeof json == 'object') {
+            if (json.params) {
                 config = json;
-            }else {
+            } else {
                 config.params = json;
             }
-            // Object.assign(config.params, $v.commonParam());
-            config.params = $v.commonParam({ method: 'get', data: config.params });
+            config.params = $v.commonParam({
+                method: 'get',
+                data: config.params
+            });
         }
-        if(typeof(json) == 'function') {
-            loadingText = loadingText || error;
-            error = error || success;
+        if (typeof (json) == 'function') {
+            // error = error || success;
+            if(typeof (error) == 'object') {
+                dataParams = Object.assign({}, dataParams, error);
+            }
+            error = success || error;
             success = json;
-            // config.params = $v.commonParam();
-            config.params = $v.commonParam({ method: 'get', data: config.params });
+            config.params = $v.commonParam({
+                method: 'get',
+                data: config.params
+            });
         }
-        if(typeof(error) == 'string') {
-            loadingText = loadingText || error;
+        if(typeof (error) == 'object') {
+            dataParams = Object.assign({}, dataParams, error);
             error = false;
+        }
+        // 判断是否加载loading
+        if(dataParams.isLoading) {
+            loadingInstance = Loading.service({
+                fullscreen: true,
+                text: typeof (dataParams.isLoading) == 'string' ? dataParams.isLoading : ''
+            });
         }
         // 发送请求
         return axios.delete(url, config).then((d) => {
             let data = d.data;
             // 调用处理结果函数
-            $v.resultHandle(data, success, error, loadingText, url)
-        }).catch((error) => {
-            $v.errorHandle(loadingInstance, error);
+            $v.resultHandle(data, success, error, dataParams, url);
+        }).catch((catchError) => {
+            $v.errorHandle(error, dataParams, url, catchError);
         })
     }
-    static post(url, json, success, error, loadingText) {
-        loadingInstance = Loading.service({ fullscreen: true, text: loadingText || '' });
+    static post(url, json, success, error, dataParams) {
+        // 定义dataParams参数内容
+        dataParams = Object.assign({}, defaultParams, dataParams);
+        // 判断传参
         let data = {};
         let config = {};
-        if(typeof(json) == 'object') {
-            if(json.data) {
+        if (typeof (json) == 'object') {
+            if (json.data) {
                 data = json.data;
                 delete json.data;
                 config = json;
-            }else {
+            } else {
                 data = json;
             }
         }
-        if(typeof(json) == 'function') {
-            loadingText = loadingText || error;
-            error = error || success;
+        if (typeof (json) == 'function') {
+            // error = error || success;
+            if(typeof (error) == 'object') {
+                dataParams = Object.assign({}, dataParams, error);
+            }
+            error = success || error;
             success = json;
         }
-        if(typeof(error) == 'string') {
-            loadingText = loadingText || error;
+        if(typeof (error) == 'object') {
+            dataParams = Object.assign({}, dataParams, error);
             error = false;
         }
+        // 判断是否加载loading
+        if(dataParams.isLoading) {
+            loadingInstance = Loading.service({
+                fullscreen: true,
+                text: typeof (dataParams.isLoading) == 'string' ? dataParams.isLoading : ''
+            });
+        }
         // 发送请求
-        // return axios.post($v.commonParam(url), data, config).then((d) => {
-        return axios.post($v.commonParam({ method: 'post', url: url }), $v.commonParam({ method: 'post', data: data }), config).then((d) => {
+        return axios.post($v.commonParam({
+            method: 'post',
+            url: url
+        }), $v.commonParam({
+            method: 'post',
+            data: data
+        }), config).then((d) => {
             let data = d.data;
             // 调用处理结果函数
-            $v.resultHandle(data, success, error, loadingText, url)
-        }).catch((error) => {
-            $v.errorHandle(loadingInstance, error);
+            $v.resultHandle(data, success, error, dataParams, url)
+        }).catch((catchError) => {
+            $v.errorHandle(error, dataParams, url, catchError);
         })
     }
-    static put(url, json, success, error, loadingText) {
-        loadingInstance = Loading.service({ fullscreen: true, text: loadingText || '' });
+    static put(url, json, success, error, dataParams) {
+        // 定义dataParams参数内容
+        dataParams = Object.assign({}, defaultParams, dataParams);
+        // 判断传参
         let data = {};
         let config = {};
-        if(typeof(json) == 'object') {
-            if(json.data) {
+        if (typeof (json) == 'object') {
+            if (json.data) {
                 data = json.data;
                 delete json.data;
                 config = json;
-            }else {
+            } else {
                 data = json;
             }
         }
-        if(typeof(json) == 'function') {
-            loadingText = loadingText || error;
-            error = error || success;
+        if (typeof (json) == 'function') {
+            // error = error || success;
+            if(typeof (error) == 'object') {
+                dataParams = Object.assign({}, dataParams, error);
+            }
+            error = success || error;
             success = json;
         }
-        if(typeof(error) == 'string') {
-            loadingText = loadingText || error;
+        if(typeof (error) == 'object') {
+            dataParams = Object.assign({}, dataParams, error);
             error = false;
         }
+        // 判断是否加载loading
+        if(dataParams.isLoading) {
+            loadingInstance = Loading.service({
+                fullscreen: true,
+                text: typeof (dataParams.isLoading) == 'string' ? dataParams.isLoading : ''
+            });
+        }
         // 发送请求
-        // return axios.put($v.commonParam(url), data, config).then((d) => {
-        return axios.post($v.commonParam({ method: 'post', url: url }), $v.commonParam({ method: 'post', data: data }), config).then((d) => {
+        return axios.put($v.commonParam({
+            method: 'post',
+            url: url
+        }), $v.commonParam({
+            method: 'post',
+            data: data
+        }), config).then((d) => {
             let data = d.data;
             // 调用处理结果函数
-            $v.resultHandle(data, success, error, loadingText, url)
-        }).catch((error) => {
-            $v.errorHandle(loadingInstance, error);
+            $v.resultHandle(data, success, error, dataParams, url)
+        }).catch((catchError) => {
+            $v.errorHandle(error, dataParams, url, catchError);
         })
     }
     // 设置出入公共参数
-    static commonParam({ data, url }) {
-        if(data) {
-            const key = md5(JSON.stringify(data));
-            data.key = key;
-            return data;
+    static commonParam({ method, data, url }) {
+        if (data) {
+            let obj = data;
+            if(method == 'get') {}
+            /*
+            if(method == 'get') {
+                // get请求时，入参属性值为数组时转成字符传入，入参属性名为pageInfo时，转成点值传入
+                for(let i in obj) {
+                    if(obj[i].constructor == Array) {
+                        obj[i] = String(obj[i]);
+                    }
+                }
+                if(obj.pageInfo) {
+                    for(let i in obj.pageInfo) {
+                        obj[`pageInfo.${i}`] = obj.pageInfo[i];
+                    }
+                    delete obj.pageInfo;
+                }
+            }
+            */
+            // 生成MD5
+            const key = md5(JSON.stringify(obj));
+            obj.key = key;
+            return obj;
         }
-        if(url) {
+        if (url) {
             return url;
         }
     }
-    /*
-    static commonParam(url) {
-        let sessionId = '';
-        let lang = '';
-        let token = '';
-        // get
-        if(!url) {
-            let data = {};
-            if(process.browser) {
-                data.sessionId = sessionId;
-                data.lang = lang;
-                data.token = token;
-            }
-            return data;
-        }
-        // post
-        if(url) {
-            let _str = url.split('?').length > 1 ? '&' : '?';
-            return url + `${_str}sessionId=${sessionId}&lang=${lang}&token=${token}`;
-        }
-    }
-    */
     // 处理ajax请求成功结果
-    static resultHandle(data, success, error, loadingText, url) {
+    static resultHandle(data, success, error, dataParams, url) {
         try {
             loadingInstance.close();
             // IE或者Edge下清除loading
-            if(CurrBrowser.getpc().broswer == 'IE' || CurrBrowser.getpc().broswer == 'Edge') {
+            if (CurrBrowser.getpc().broswer == 'IE' || CurrBrowser.getpc().broswer == 'Edge') {
                 setTimeout(() => {
                     let elm = document.querySelector('.el-loading-mask.is-fullscreen');
-                    if(elm) {
+                    if (elm) {
                         elm.parentNode.removeChild(elm);
                     }
                 }, 2000)
             }
-        }catch(e) {
+        } catch (e) {
             console.log('error:' + e);
             console.log(url);
         }
-        // success ? success(data) : '';return;
-        if(data.meta.result == 'SUCCESS') {
+        // 如果报文没返回code，代表不是规范报文，直接调用成功回调
+        if(!data.code) {
             success ? success(data) : '';
+            return;
         }
-        if(data.meta.result == 'FAIL') {
-            if(typeof(error) == 'function') {
-                error(data, (errMsg) => {
-                    Message.error({
-                        message: errMsg || data.meta.message,
-                        duration: TIPS_TIEM,
-                        customClass: 'ajax_error_tip_text_box',
-                        showClose: true
-                    });
-                });
-                return;
+        // 接口返回成功操作
+        if(data.code == '0') {
+            // 接口成功，是否显示提示框
+            if(dataParams.isSuccessPrompt) {
+                let obj = {
+                    title: '',
+                    message: data.msg || '',
+                    moreMessage: data.error || '',
+                    res: data
+                }
+                PromptBox.success(Object.assign({}, obj, dataParams.isSuccessPrompt));
             }
-            if(error) {
-                console.log(data);
-            }else {
-                Message.error({
-                    message: data.meta.message,
-                    duration: TIPS_TIEM,
-                    customClass: 'ajax_error_tip_text_box',
-                    showClose: true
-                });
-            }
+            // 返回成功回调函数
+            success ? success(data) : '';
+            return;
         }
-        if(data.meta.result == 'AUTH_ERROR') { // 登录过期
+        // 登录过期操作
+        if(data.code == 'AUTH_ERROR') {
             try {
                 sessionStorage.clear();
-            }catch(e) {
+                location.href = 'login.html';
+            } catch (e) {
                 console.log('error: ' + e)
             }
+            return;
+        }
+        // 接口返回错误操作
+        if (typeof (error) == 'function') {
+            error(data, () => {
+                if(dataParams.isFailPrompt) {
+                    let obj = {
+                        title: '',
+                        message: data.msg || '',
+                        moreMessage: data.error || '',
+                        res: data
+                    }
+                    return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
+                }
+            })
+        }
+        if(!error) {
+            if(dataParams.isFailPrompt) {
+                let obj = {
+                    title: '',
+                    message: data.msg || '',
+                    moreMessage: data.error || '',
+                    res: data
+                }
+                return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
+            }
+        }else {
+            console.log(data);
         }
     }
     // 处理ajax请求错误结果
-    static errorHandle(loadingInstance, error) {
+    static errorHandle(error, dataParams, url, catchError) {
+        // console.log(catchError.response.data);
+        // console.log(catchError.response.status);
+        // console.log(catchError.response.headers);
         try {
             loadingInstance.close();
             // IE或者Edge下清除loading
-            if(CurrBrowser.getpc().broswer == 'IE' || CurrBrowser.getpc().broswer == 'Edge') {
+            if (CurrBrowser.getpc().broswer == 'IE' || CurrBrowser.getpc().broswer == 'Edge') {
                 setTimeout(() => {
                     let elm = document.querySelector('.el-loading-mask.is-fullscreen');
-                    if(elm) {
+                    if (elm) {
                         elm.parentNode.removeChild(elm);
                     }
                 }, 2000)
             }
-        }catch(e) {
+        } catch (e) {
             console.log('error: ' + e)
         }
-        console.log('error:' + error.message);
+        if (typeof (error) == 'function') {
+            error(catchError, () => {
+                if(dataParams.isFailPrompt) {
+                    let obj = {
+                        title: '',
+                        message: '系统错误',
+                        // moreMessage: '',
+                        moreMessage: `
+                                                  请求url地址: ${url}</br>
+                                                  错误原因: ${catchError.message}
+                        `,
+                        res: catchError
+                    }
+                    return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
+                }
+            })
+        }
+        if(!error) {
+            if(dataParams.isFailPrompt) {
+                let obj = {
+                    title: '',
+                    message: '系统错误',
+                    // moreMessage: '',
+                    moreMessage: `
+                                           请求url地址: ${url}</br>
+                                           错误原因: ${catchError.message}
+                    `,
+                    res: catchError
+                }
+                return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
+            }
+        }else {
+            console.log('error:' + catchError.message);
+        }
+    }
+}
+
+class PromptBox {
+    static success({ title, message, moreMessage, res, type }) {
+        type = 'success';
+        return PromptBox.common({
+            title: title || '提示',
+            message: message || (res ? res.msg ? res.msg : '请求成功' : '请求成功'),
+            moreMessage: moreMessage || '',
+            type
+        })
+    }
+    static fail({ title, message, moreMessage, res, type }) {
+        type = 'error';
+        return PromptBox.common({
+            title: title || '提示',
+            message: message || (res ? res.msg ? res.msg : '请求失败' : '请求失败'),
+            moreMessage: moreMessage || '',
+            type
+        })
+    }
+    static common({ title, message, moreMessage, type }) {
+        // <button class="el-button el-button--primary el-button--small">更多 <i class="el-icon-caret-bottom"></i></button>
+        return MessageBox({
+            customClass: 'common_prompt_box_style',
+            dangerouslyUseHTMLString: true,
+            // type,
+            title: title,
+            message: `
+                <div class="msg_box">
+                    <div class="el-message-box__status el-icon-${type}"></div>
+                    <div class="msg_content">${message}</div>
+                    <i class="switch_btn el-icon-arrow-down" style="${moreMessage ? '' : 'display: none;'}" onclick="
+                        if(this.className.indexOf('el-icon-arrow-down') >= 0) {
+                            this.className = 'switch_btn el-icon-arrow-up';
+                            this.parentNode.nextElementSibling.style.height = 'auto';
+                        }else {
+                            this.className = 'switch_btn el-icon-arrow-down';
+                            this.parentNode.nextElementSibling.style.height = 0;
+                        }
+                    "></i>
+                </div>
+                <div class="more_msg_box collapse-transition">${moreMessage}</div>
+            `,
+            showCancelButton: false,
+            showConfirmButton: false
+        }).catch(() => {})
     }
 }
 

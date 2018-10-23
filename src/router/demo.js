@@ -10,12 +10,18 @@ export const routes = [
         component: LayoutDefault,
         redirect: '/',
         name: 'demo',
+        meta: { title: 'demo' },
         children: [
             {
                 path: '',
                 component: () => import ( /* webpackChunkName: "Demo" */ '~/pages/demo/demo/demo'),
                 name: 'demoIndex',
-                meta: { title: 'demo', icon: 'demo', noCache: false }
+                meta: {
+                    title: '首页',
+                    icon: 'demo',
+                    storeName: 'Index',
+                    noCache: false
+                }
             }
         ]
     },
@@ -30,7 +36,24 @@ export const routes = [
                 import ( /* webpackChunkName: "svgIcon" */ '~/pages/demo/svg_icon'),
             name: 'svgIconIndex',
             meta: {
-                title: 'icon',
+                title: 'svg图标使用',
+                icon: 'icon',
+                noCache: false
+            }
+        }]
+    },
+    {
+        path: '/demo/ajax_example',
+        component: LayoutDefault,
+        redirect: '/demo/ajax_example/index',
+        name: 'ajax',
+        children: [{
+            path: 'index',
+            component: () =>
+                import( /* webpackChunkName: "ajaxExample" */ '~/pages/demo/ajax_example'),
+            name: 'ajax_example',
+            meta: {
+                title: 'ajax使用',
                 icon: 'icon',
                 noCache: false
             }

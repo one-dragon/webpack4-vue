@@ -2,14 +2,14 @@
     <div class="tags_view clear_fix" data-common-tags-view-box>
         <draggable v-model="dragTagsData" class="drag_box clear_fix" ref="tagsDragBox">
             <el-tag
-                :title="tag.name"
+                :title="tag.meta.title"
                 v-for="tag in tagsData"
                 :key="tag.path"
                 :class="isActive(tag) ? 'active' : ''"
                 closable
                 :disable-transitions="false"
                 @close="handleClose(tag)">
-                <router-link :to="tag.path">{{ tag.name }}</router-link>
+                <router-link :to="tag.path">{{ tag.meta.title }}</router-link>
             </el-tag>
         </draggable>
         <!--<el-tag
@@ -71,8 +71,15 @@
             isActive(route) {
                 return route.path === this.$route.path;
             },
-            // 关闭tab操作，并删除对应vuex中的数据
+            // 关闭tab操
             handleClose(route) {
+                // 清除当前路由对应的vuex数据
+                if(route.meta && route.meta.storeName) {
+                    if(this.$store._mutations[`${route.meta.storeName}/CLEAR_DATA`]) {
+                        this.$store.commit(`${route.meta.storeName}/CLEAR_DATA`);
+                    }
+                }
+                // 删除vuex中的tagsView数据中的当前路由
                 this.$store.dispatch('tagsView/delData', route).then((list) => {
                     // 如果是关闭当前选中的tag时，判断跳转路由
                     if(this.isActive(route)) {

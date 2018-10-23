@@ -13,15 +13,16 @@
                 @mouseleave="menuItemLeave(subMenuIndex)">
                 <!--一级菜单-->
                 <div class="submenu">
-                    <i class="el-icon-menu" :title="subMenu.name"></i>
+                    <!--<i class="el-icon-menu" :title="subMenu.name"></i>-->
+                    <i class="el-icon-menu" :title="subMenu.children.length == 1 && subMenu.children[0].path == 'index' ? subMenu.children[0].meta.title : subMenu.meta.title"></i>
                     <!--<a href="" v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">{{ subMenu.name }}</a>-->
-                    <router-link :to="subMenu.path" v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">{{ subMenu.name }}</router-link>
-                    <span v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">{{ subMenu.name }}</span>
+                    <router-link :to="subMenu.path" v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">{{ subMenu.children[0].meta.title }}</router-link>
+                    <span v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">{{ subMenu.meta.title }}</span>
                 </div>
                 <!--二级以上菜单-->
                 <div class="childmenu" v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">
                     <el-scrollbar class="childmenu_layout" style="height: 100%;">
-                        <h3>{{ subMenu.name }}</h3>
+                        <h3>{{ subMenu.meta.title }}</h3>
                         <div class="warp_menu" :class="subMenu.children.length == 1 ? 'column_count1' : subMenu.children.length == 2 ? 'column_count2' : 'column_count3'">
                             <dl v-for="(childMenu, childMenuIndex) in subMenu.children" :key="'childMenu' + childMenuIndex">
                                 <dt>
@@ -29,9 +30,9 @@
                                         @click.native="menuItemLeave(subMenuIndex)" 
                                         :to="subMenu.path == '/' ? '/' + childMenu.path : subMenu.path + '/' + childMenu.path" 
                                         v-if="!childMenu.children || childMenu.children.length == 0">
-                                        {{ childMenu.name }}
+                                        {{ childMenu.meta.title }}
                                     </router-link>
-                                    <span v-if="childMenu.children && childMenu.children.length > 0">{{ childMenu.name }}</span>
+                                    <span v-if="childMenu.children && childMenu.children.length > 0">{{ childMenu.meta.title }}</span>
                                 </dt>
                                 <dd>
                                     <router-link 
@@ -39,7 +40,7 @@
                                         :to="subMenu.path + '/' + childMenu.path + '/' + childMenuItem.path" 
                                         v-for="(childMenuItem, childMenuItemIndex) in childMenu.children"
                                         :key="'childMenuItem' + childMenuItemIndex">
-                                        {{ childMenuItem.name }}
+                                        {{ childMenuItem.meta.title }}
                                     </router-link>
                                 </dd>
                             </dl>
@@ -272,7 +273,7 @@
                 height: $menu_height;
                 overflow: hidden;
                 padding-right: 10px;
-                font-size: 14px;
+                font-size: 13px;
                 line-height: 16px;
             }
             > li:hover{

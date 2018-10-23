@@ -2,7 +2,7 @@
 * {
     padding: 0px;
     margin: 0px;
-    font-size: 14px;
+    font-size: 12px;
     font-family: Arial,sans-serif;
     color: #34495e;
     word-break: break-word;
@@ -118,5 +118,41 @@ a:visited {
 @media (max-width: $common_width) {
     .common_width {
         width: 100%;
+    }
+}
+
+
+/*公共样式*/
+// 公共提示框样式处理
+.common_prompt_box_style{
+    .el-message-box__message{
+        p{
+            height: auto;
+        }
+        .msg_box{
+            position: relative;
+            padding-left: 36px;
+            padding-right: 20px;
+            color: #333;
+            .el-message-box__status{
+                left: 0;
+            }
+            .msg_content{
+                font-size: 13px;
+            }
+            .switch_btn{
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+        .more_msg_box{
+            height: 0;
+            overflow: hidden;
+            margin-top: 5px;
+            padding-left: 36px;
+            color: #999;
+        }
     }
 }
