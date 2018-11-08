@@ -20,7 +20,8 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.vue', '.scss', '.less', '.json', '.json5'],
         alias: {
-            'vue$': 'vue/dist/vue.esm.js',
+            // 使用完整版，则需要在打包工具里配置一个别名
+            // 'vue$': 'vue/dist/vue.esm.js',
         }
     },
     plugins: [
