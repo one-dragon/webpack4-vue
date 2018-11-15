@@ -13,12 +13,12 @@
                 <a href="http://element-cn.eleme.io/#/zh-CN" target="_blank" style="display: inline-block; margin-left: 20px;">Element</a>
             </div>
             <div class="menu_r_item border_lr">
-                <svg-icon name="password" fill="#8898ac" width="14" height="14" />
+                <svg-icon name="lock" fill="#8898ac" width="16" height="16" />
             </div>
             <div class="menu_r_item">
                 <el-dropdown trigger="click">
                     <span class="el-dropdown-link">
-                        <svg-icon name="user" fill="#8898ac" width="20" height="20" />
+                        <svg-icon name="user" fill="#8898ac" width="16" height="16" />
                         <em>下拉菜单</em>
                         <i class="el-icon-arrow-down el-icon--right"></i>
                     </span>

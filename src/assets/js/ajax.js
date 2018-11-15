@@ -1,10 +1,13 @@
 
 import Vue from 'vue';
-import { $v } from '~/assets/js/public';
+import { $v, PromptBox } from '~/assets/js/public';
 import axios from 'axios';
 
 Vue.use({
     install(Vue) {
+        // 提示框方法
+        Vue.prototype.$box = PromptBox.common;
+        // ajax方法
         Vue.prototype.$v = $v;
         Vue.prototype.$get = function(...arg) {
             $v.get.apply(this, arg);

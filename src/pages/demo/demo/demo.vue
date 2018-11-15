@@ -26,7 +26,20 @@
 </template>
 
 <script>
-    export default {}
+    export default {
+        mounted() {
+            // ajax调用实例
+            let data = {};
+            data.host = 'sit.cuniq.com';
+            data.region = '/hk';
+            data.acceptPortal = 1;
+            data.langId = 1;
+            this.$get( '/cq-ocms/site/detailMobile', data, (d) => {
+                console.log('d')
+                console.log(d)
+            }, { isSuccessPrompt: true })
+        }
+    }
 </script>
 
 <style lang="scss">

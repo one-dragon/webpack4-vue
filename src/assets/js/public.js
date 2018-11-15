@@ -1,5 +1,14 @@
+/*
+ * @Author: on-dragon
+ * @Date: 2018-11-14 11:00:02
+ * @Last Modified by: on-dragon
+ * @Last Modified time: 2018-11-15 19:11:32
+ * description: 封装公共方法
+ */
+
 import axios from 'axios';
 import { Loading, MessageBox } from 'element-ui';
+// import { TrackUtils } from '~/assets/js/event_track';
 import md5 from 'blueimp-md5';
 // ajax请求封装
 // axios.defaults.baseURL = process.env.HOST ? 'http://' + process.env.HOST + ':' + process.env.PORT : '';
@@ -206,7 +215,7 @@ class $v {
     static commonParam({ method, data, url }) {
         if (data) {
             let obj = data;
-            if(method == 'get') {}
+            if (method == 'get') {}
             /*
             if(method == 'get') {
                 // get请求时，入参属性值为数组时转成字符传入，入参属性名为pageInfo时，转成点值传入
@@ -249,63 +258,20 @@ class $v {
             console.log('error:' + e);
             console.log(url);
         }
-        // 如果报文没返回code，代表不是规范报文，直接调用成功回调
-        if(!data.code) {
-            success ? success(data) : '';
-            return;
+
+        // 返回成功
+        success ? success(data) : '';
+
+        // 默认成功基本---提示框数据
+        let promptData = {
+            title: '提示',
+            message: '请求成功',
+            moreMessage: '',
+            type: 'success'
         }
-        // 接口返回成功操作
-        if(data.code == '0') {
-            // 接口成功，是否显示提示框
-            if(dataParams.isSuccessPrompt) {
-                let obj = {
-                    title: '',
-                    message: data.msg || '',
-                    moreMessage: data.error || '',
-                    res: data
-                }
-                PromptBox.success(Object.assign({}, obj, dataParams.isSuccessPrompt));
-            }
-            // 返回成功回调函数
-            success ? success(data) : '';
-            return;
-        }
-        // 登录过期操作
-        if(data.code == 'AUTH_ERROR') {
-            try {
-                sessionStorage.clear();
-                location.href = 'login.html';
-            } catch (e) {
-                console.log('error: ' + e)
-            }
-            return;
-        }
-        // 接口返回错误操作
-        if (typeof (error) == 'function') {
-            error(data, () => {
-                if(dataParams.isFailPrompt) {
-                    let obj = {
-                        title: '',
-                        message: data.msg || '',
-                        moreMessage: data.error || '',
-                        res: data
-                    }
-                    return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
-                }
-            })
-        }
-        if(!error) {
-            if(dataParams.isFailPrompt) {
-                let obj = {
-                    title: '',
-                    message: data.msg || '',
-                    moreMessage: data.error || '',
-                    res: data
-                }
-                return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
-            }
-        }else {
-            console.log(data);
+        // 处理提示框提示
+        if (dataParams.isSuccessPrompt) {
+            return PromptBox.common(Object.assign({}, promptData, dataParams.isSuccessPrompt));
         }
     }
     // 处理ajax请求错误结果
@@ -313,6 +279,9 @@ class $v {
         // console.log(catchError.response.data);
         // console.log(catchError.response.status);
         // console.log(catchError.response.headers);
+        // console.log('bbbb---------------------')
+        // console.log(catchError.message);
+        // console.log(catchError.response);
         try {
             loadingInstance.close();
             // IE或者Edge下清除loading
@@ -327,36 +296,38 @@ class $v {
         } catch (e) {
             console.log('error: ' + e)
         }
+        // 系统级别---错误提示数据
+        let promptData = {
+            title: '提示',
+            message: '系统错误',
+            moreMessage: `url: ${url} </br> message: ${catchError.message}`,
+            res: catchError,
+            type: 'error'
+        }
+        // 页面级别---代码错误提示
+        if (catchError.message && catchError.response == undefined) {
+            // 控制台输出具体错误内容
+            console.error(catchError);
+            promptData.message = '页面错误';
+            return PromptBox.common(Object.assign({}, promptData));
+        }
+        // 接口级别---返回400错误提示
+        if (catchError.response.status == 400 && typeof (catchError.response.data) == 'object') {
+            let data = catchError.response.data;
+            promptData.message = data.reason;
+            promptData.moreMessage = `url: ${url} </br> code: ${data.code} </br> message: ${data.message}`;
+        }
+        // 处理提示框提示
         if (typeof (error) == 'function') {
             error(catchError, () => {
                 if(dataParams.isFailPrompt) {
-                    let obj = {
-                        title: '',
-                        message: '系统错误',
-                        // moreMessage: '',
-                        moreMessage: `
-                                                  请求url地址: ${url}</br>
-                                                  错误原因: ${catchError.message}
-                        `,
-                        res: catchError
-                    }
-                    return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
+                    return PromptBox.common(Object.assign({}, promptData, dataParams.isFailPrompt));
                 }
             })
         }
         if(!error) {
             if(dataParams.isFailPrompt) {
-                let obj = {
-                    title: '',
-                    message: '系统错误',
-                    // moreMessage: '',
-                    moreMessage: `
-                                           请求url地址: ${url}</br>
-                                           错误原因: ${catchError.message}
-                    `,
-                    res: catchError
-                }
-                return PromptBox.fail(Object.assign({}, obj, dataParams.isFailPrompt));
+                return PromptBox.common(Object.assign({}, promptData, dataParams.isFailPrompt));
             }
         }else {
             console.log('error:' + catchError.message);
@@ -364,33 +335,23 @@ class $v {
     }
 }
 
+
 class PromptBox {
-    static success({ title, message, moreMessage, res, type }) {
-        type = 'success';
-        return PromptBox.common({
-            title: title || '提示',
-            message: message || (res ? res.msg ? res.msg : '请求成功' : '请求成功'),
-            moreMessage: moreMessage || '',
-            type
-        })
-    }
-    static fail({ title, message, moreMessage, res, type }) {
-        type = 'error';
-        return PromptBox.common({
-            title: title || '提示',
-            message: message || (res ? res.msg ? res.msg : '请求失败' : '请求失败'),
-            moreMessage: moreMessage || '',
-            type
-        })
-    }
     static common({ title, message, moreMessage, type }) {
         // <button class="el-button el-button--primary el-button--small">更多 <i class="el-icon-caret-bottom"></i></button>
         return MessageBox({
             customClass: 'common_prompt_box_style',
             dangerouslyUseHTMLString: true,
+            modal: false,
             // type,
             title: title,
             message: `
+                <style>
+                    .el-message-box__wrapper[aria-label="${title}"]{
+                        background-color: rgba(0,0,0,.5);
+                        z-index: 9999 !important;
+                    }
+                </style>
                 <div class="msg_box">
                     <div class="el-message-box__status el-icon-${type}"></div>
                     <div class="msg_content">${message}</div>
@@ -413,9 +374,23 @@ class PromptBox {
 }
 
 
+// 图片转为base64
+class imgSrcTo {
+    // img为传入img标签dom对象，getData为回调函数返回base64串
+    static base64(img, getData) {
+        let canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        getData(canvas.toDataURL())
+    }
+}
+
+
 // 检测当前浏览器端
 class CurrBrowser {
-    static get(){
+    static get() {
         var browser = {
             versions: (function () {
                 var u = navigator.userAgent;
@@ -435,24 +410,24 @@ class CurrBrowser {
             })(),
             language: (navigator.browserLanguage || navigator.language).toLowerCase()
         }
-        if(browser.versions.mobile) { // 判断是否是移动设备打开。browser代码在下面
+        if (browser.versions.mobile) { // 判断是否是移动设备打开。browser代码在下面
             // return 'mobile';
             var ua = navigator.userAgent.toLowerCase(); // 获取判断用的对象
-            if(ua.match(/MicroMessenger/i) == 'micromessenger') {
+            if (ua.match(/MicroMessenger/i) == 'micromessenger') {
                 // 在微信中打开
                 return 'WX';
             }
-            if(ua.match(/WeiBo/i) == 'weibo') {
+            if (ua.match(/WeiBo/i) == 'weibo') {
                 // 在新浪微博客户端打开
             }
-            if(ua.match(/QQ/i) == 'qq') {
+            if (ua.match(/QQ/i) == 'qq') {
                 // 在QQ空间打开
             }
-            if(browser.versions.ios) {
+            if (browser.versions.ios) {
                 // 是否在IOS浏览器打开
                 return 'WAP';
             }
-            if(browser.versions.android) {
+            if (browser.versions.android) {
                 // 是否在安卓浏览器打开
                 return 'WAP';
             }
@@ -462,7 +437,7 @@ class CurrBrowser {
             return 'PC';
         }
     }
-    static getpc(){
+    static getpc() {
         var sys = {};
         var ua = navigator.userAgent.toLowerCase();
         var s;
@@ -473,13 +448,46 @@ class CurrBrowser {
                         (s = ua.match(/chrome\/([\d.]+)/)) ? sys.chrome = s[1] :
                             (s = ua.match(/opera.([\d.]+)/)) ? sys.opera = s[1] :
                                 (s = ua.match(/version\/([\d.]+).*safari/)) ? sys.safari = s[1] : 0;
-        if(sys.edge) { return { broswer: 'Edge', version: sys.edge } };
-        if(sys.ie) { return { broswer: 'IE', version: sys.ie } };
-        if(sys.firefox) { return { broswer: 'Firefox', version: sys.firefox } };
-        if(sys.chrome) { return { broswer: 'Chrome', version: sys.chrome } };
-        if(sys.opera) { return { broswer: 'Opera', version: sys.opera } };
-        if(sys.safari) { return { broswer: 'Safari', version: sys.safari } };
-        return { broswer: '', version: '0' };
+        if (sys.edge) {
+            return {
+                broswer: 'Edge',
+                version: sys.edge
+            }
+        };
+        if (sys.ie) {
+            return {
+                broswer: 'IE',
+                version: sys.ie
+            }
+        };
+        if (sys.firefox) {
+            return {
+                broswer: 'Firefox',
+                version: sys.firefox
+            }
+        };
+        if (sys.chrome) {
+            return {
+                broswer: 'Chrome',
+                version: sys.chrome
+            }
+        };
+        if (sys.opera) {
+            return {
+                broswer: 'Opera',
+                version: sys.opera
+            }
+        };
+        if (sys.safari) {
+            return {
+                broswer: 'Safari',
+                version: sys.safari
+            }
+        };
+        return {
+            broswer: '',
+            version: '0'
+        };
     }
 }
 
@@ -495,23 +503,25 @@ let CountDay = (month, year) => {
     case 8:
     case 10:
     case 12:
-        dayNum = 31; break;
+        dayNum = 31;
+        break;
     case 4:
     case 6:
     case 9:
     case 11:
-        dayNum = 30; break;
+        dayNum = 30;
+        break;
     case 2:
-        if(/^\d+$/.test(year / 100)) {
-            if(/^\d+$/.test(year / 400)) {
+        if (/^\d+$/.test(year / 100)) {
+            if (/^\d+$/.test(year / 400)) {
                 dayNum = 29;
-            }else {
+            } else {
                 dayNum = 28;
             }
-        }else {
-            if(/^\d+$/.test(year / 4)) {
+        } else {
+            if (/^\d+$/.test(year / 4)) {
                 dayNum = 29;
-            }else {
+            } else {
                 dayNum = 28;
             }
         }
@@ -532,7 +542,13 @@ class TreeData {
      * currTree: 匹配内容的连接的字符串
      * totalArr: 总数据
      * */
-    static get({ data, labelVal, label, children, callback }, currTree = '', totalArr = []) {
+    static get({
+        data,
+        labelVal,
+        label,
+        children,
+        callback
+    }, currTree = '', totalArr = []) {
         if (!data) {
             return;
         }
@@ -540,7 +556,7 @@ class TreeData {
             totalArr = data;
         }
         data.map((item) => {
-            if(item[label] == labelVal) {
+            if (item[label] == labelVal) {
                 // 当前最顶层父级所有数据
                 let currTotalObj = {};
                 // 当前最顶层父级匹配的内容
@@ -557,9 +573,15 @@ class TreeData {
                 })
                 // 成功后返回数据: 当前对应的对象、当前同级的所有数据（数组返回）、当前最顶层父级所有数据、匹配内容的连接的字符串
                 callback ? callback(item, data, currTotalObj, currTree + item[label]) : '';
-            }else {
+            } else {
                 let trees = currTree + item[label] + '$&&$';
-                TreeData.get({ data: item[children], labelVal, label, children, callback }, trees, totalArr);
+                TreeData.get({
+                    data: item[children],
+                    labelVal,
+                    label,
+                    children,
+                    callback
+                }, trees, totalArr);
             }
         })
     }
@@ -598,8 +620,12 @@ class DateFormat {
         let sec = ('0' + val.getSeconds()).substr(-2);
         return `${date} ${hou}:${min}:${sec}`
     }
+    static getBeginMonth(val) {
+        let y = val.getFullYear();
+        let m = ('0' + (val.getMonth() + 1)).substr(-2);
+        return `${y}-${m}-01`;
+    }
 }
-
 
 // sessionStorage操作
 class Session {
@@ -607,7 +633,7 @@ class Session {
         sessionStorage.setItem(name, val);
     }
     static get(name) {
-        sessionStorage.getItem(name);
+        return sessionStorage.getItem(name);
     }
     static remove(name) {
         sessionStorage.removeItem(name);
@@ -623,7 +649,7 @@ class Local {
         localStorage.setItem(name, val);
     }
     static get(name) {
-        localStorage.getItem(name);
+        return localStorage.getItem(name);
     }
     static remove(name) {
         localStorage.removeItem(name);
@@ -634,13 +660,66 @@ class Local {
 }
 
 
+// 右侧内容区滚动条回滚到顶部
+class ScrollbarTo {
+    static top(num) {
+        let bar = ScrollbarTo.getScrollBar();
+        bar.scrollTop = num || 0;
+    }
+    static getScrollBar() {
+        return window.document.querySelector('.content_r .default_layout_scrollbar > .el-scrollbar__wrap');
+    }
+}
+
+
+// 滚动条滑动缓冲动画效果 -- elem(滚动目标元素), direction('top'/'left'), num(滚动距离) 必传参数 -- speed(滚动速度), cb(滚动完成回调函数) 选填参数
+let scrollAnimate = function (elem, direction, num, speed, cb) {
+    if (!elem || !direction || !String(num)) { return false; }
+    // 首字母大写
+    direction = direction.toLowerCase().replace(/\b[a-z]/g, word => word.toUpperCase());
+    // 判断选填入参
+    if (typeof speed == 'function') {
+        cb = speed;
+        speed = null;
+    }
+    let timer;
+    let speeds = speed || 4;
+    let isAdd = true; // 默认向右、向下滑动
+    // 向左、向上滑动
+    if (num < elem[`scroll${direction}`]) {
+        isAdd = false;
+    }
+    timer = setInterval(() => {
+        // 通过元素的当前srcoll值，获取下次滚动距离，产生缓冲动画
+        let speed = Math.ceil((!isAdd ? elem[`scroll${direction}`] : (num - elem[`scroll${direction}`])) / speeds);
+        // 获取元素下次滚动的scroll值
+        let count = elem[`scroll${direction}`] + (isAdd ? speed : -speed);
+        // 判断下次滚动的scroll值是否超过目标值(num值)
+        if ((isAdd && count >= num) || (!isAdd && count <= num)) {
+            elem[`scroll${direction}`] = num;
+            clearInterval(timer);
+            cb ? cb() : '';
+            return;
+        }
+        elem[`scroll${direction}`] += (isAdd ? speed : -speed);
+        if (elem[`scroll${direction}`] == num) {
+            clearInterval(timer);
+            cb ? cb() : '';
+        }
+    }, 30)
+}
+
 export {
     $v,
+    PromptBox,
     CurrBrowser,
     CountDay,
     TreeData,
     GetUrlPara,
     DateFormat,
     Session,
-    Local
+    Local,
+    imgSrcTo,
+    ScrollbarTo,
+    scrollAnimate
 }

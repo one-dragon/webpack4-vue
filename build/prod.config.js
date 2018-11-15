@@ -122,15 +122,15 @@ const prodConfig = merge(baseConfig, {
     	minimizer: [
       		new UglifyJSPlugin({
         		cache: true,
-                parallel: true,
-                sourceMap: true,
-                uglifyOptions: {
-                    compress: {
+		        parallel: true,
+		        sourceMap: true,
+		        uglifyOptions: {
+		            compress: {
                         warnings: false,
                         drop_debugger: true,
                         drop_console: true
                     }
-                }
+		        }
 	      	}),
      	 	new OptimizeCssAssetsPlugin({
 	      		//assetNameRegExp: /\.src\.css$/g,

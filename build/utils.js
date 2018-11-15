@@ -6,7 +6,8 @@ const resolve = path.resolve;
 exports.join = join;
 exports.resolve = resolve;
 
-
+// console.log('process.argv----------');
+// console.log(process.argv); // 获取参数：--config
 // 是否为开发模式
 const isDev =  process.env.NODE_ENV == 'development';
 exports.isDev = isDev;

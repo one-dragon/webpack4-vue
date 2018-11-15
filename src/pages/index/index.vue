@@ -21,6 +21,9 @@
                         <a href="demo.html" target="_blank">
                             <el-button type="success" round>DEMO</el-button>
                         </a>
+                        <a href="demo2.html" target="_blank">
+                            <el-button type="success" round>DEMO2</el-button>
+                        </a>
                     </div>
                 </el-col>
             </el-row>
@@ -66,12 +69,15 @@
         h1{
             margin-top: 10px;
         }
-        .but_box > a:nth-child(2){
+        .but_box > a{
             margin: 0 10px;
         }
-        /*.but_box > a:last-child{
-            margin-left: 10px;
-        }*/
+        .but_box > a:first-child{
+            margin-left: 0;
+        }
+        .but_box > a:last-child{
+            margin-right: 0;
+        }
         .el-button{
             margin-top: 15px;
             transition: all 0.15s ease;

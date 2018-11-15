@@ -1,8 +1,11 @@
 
 import Vue from 'vue';
-import LayoutDefault from '~/layout/Default';
+import LayoutDefaul from '~/layout/Default';
+import LayoutDefault2 from '~/layout/Default2';
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
+
+const LayoutDefault = location.href.indexOf('demo2.html') > -1 ? LayoutDefault2 : LayoutDefaul;
 
 export const routes = [
     {

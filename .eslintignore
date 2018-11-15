@@ -1,0 +1,5 @@
+# src/router/
+src/static/
+build/
+dist/
+node_modules/

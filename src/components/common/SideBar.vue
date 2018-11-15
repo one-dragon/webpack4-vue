@@ -1,3 +1,9 @@
+/*
+ * @Author: on-dragon 
+ * @Date: 2018-11-14 10:55:11 
+ * @Last Modified by: on-dragon
+ * @Last Modified time: 2018-11-15 19:54:49
+ */
 <template>
     <el-scrollbar class="sidebar_box" :class="{'hide_sidebar' : !isOpenSidebar, 'hide_text': !isShowSidebarText}" wrap-class="scrollbar_wrapper" data-common-side-bar-box>
         <div class="logo_box">
@@ -13,14 +19,22 @@
                 @mouseleave="menuItemLeave(subMenuIndex)">
                 <!--一级菜单-->
                 <div class="submenu">
-                    <!--<i class="el-icon-menu" :title="subMenu.name"></i>-->
-                    <i class="el-icon-menu" :title="subMenu.children.length == 1 && subMenu.children[0].path == 'index' ? subMenu.children[0].meta.title : subMenu.meta.title"></i>
-                    <!--<a href="" v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">{{ subMenu.name }}</a>-->
-                    <router-link :to="subMenu.path" v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">{{ subMenu.children[0].meta.title }}</router-link>
-                    <span v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">{{ subMenu.meta.title }}</span>
+                    <i class="el-icon-menu" :title="subMenu.name"></i>
+                    <!-- <router-link 
+                        :to="subMenu.path" 
+                        v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">
+                        {{ subMenu.name }}
+                    </router-link>
+                    <span v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">{{ subMenu.name }}</span> -->
+                    <router-link 
+                        :to="subMenu.path == '/' ? '/' + subMenu.children[0].path : subMenu.path + '/' + subMenu.children[0].path" 
+                        v-if="subMenu.children.length == 1 && (!subMenu.children[0].children || subMenu.children[0].children.length == 0)">
+                        {{ subMenu.children[0].meta.title }}
+                    </router-link>
+                    <span v-if="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0)">{{ subMenu.meta.title }}</span>
                 </div>
                 <!--二级以上菜单-->
-                <div class="childmenu" v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">
+                <div class="childmenu" v-if="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0)">
                     <el-scrollbar class="childmenu_layout" style="height: 100%;">
                         <h3>{{ subMenu.meta.title }}</h3>
                         <div class="warp_menu" :class="subMenu.children.length == 1 ? 'column_count1' : subMenu.children.length == 2 ? 'column_count2' : 'column_count3'">
@@ -91,6 +105,10 @@
 </template>
 
 <script>
+    import Vue from 'vue';
+    import { routes } from '~/router';
+    import { Scrollbar } from 'element-ui';
+    Vue.use(Scrollbar);
     export default {
         data() {
             return {
@@ -105,7 +123,7 @@
                 let menu = this.$refs.meuns;
                 let menuList = Array.from(menu.querySelectorAll('li'));
                 // menuList.map((item) => {
-                    // item.className = '';
+                // item.className = '';
                 // })
                 menuList[index].className = 'is';
                 setTimeout(() => {
@@ -142,8 +160,13 @@
 <style lang="scss">
     @import "~/assets/css/theme_default";
     .sidebar_box[data-common-side-bar-box]{
+        /*position: fixed;
+        left: 0;
+        top: 0;*/
         height: 100vh;
         width: $sidebar_width;
+        /*height: 100%;*/
+        /*background: linear-gradient(225deg,rgba(0,162,249,1) 0%,rgba(25,74,242,1) 100%);*/
         box-shadow: 4px 0 15px 0 rgba(45,71,125,0.3);
         transition: width .3s;
         &:before, &:after{
@@ -165,8 +188,11 @@
         }
         .scrollbar_wrapper{
             position: relative;
+            /*min-height: 100vh;*/
             height: calc(100vh - 32px);
+            /*background-image: url("../../assets/img/sidebar/nav_bg.png");*/
             background-repeat: no-repeat;
+            /*padding-bottom: 32px;*/
             margin-bottom: 0 !important;
             box-sizing: border-box;
             overflow-x: hidden !important;
@@ -272,16 +298,18 @@
                 margin-left: $sidebar_ico_width;
                 height: $menu_height;
                 overflow: hidden;
+                /*text-overflow: ellipsis;
+                white-space: nowrap;*/
                 padding-right: 10px;
                 font-size: 13px;
                 line-height: 16px;
             }
-            > li:hover{
-                /*background: rgba(255,255,255,0.2);*/
-                /*.childmenu{
-                   width: 828px;
-                }*/
-            }
+            // > li:hover{
+            //     /*background: rgba(255,255,255,0.2);*/
+            //     /*.childmenu{
+            //        width: 828px;
+            //     }*/
+            // }
             > li.slide_out .childmenu{
                 animation: menu_open_slideout .1s cubic-bezier(0, 0, .2, 1)
             }
@@ -304,6 +332,13 @@
                 top: 0;
                 bottom: 0;
                 display: none;
+                /*width: 0;
+                overflow: hidden;*/
+                /*display: flex;
+                flex-flow: column;
+                flex-direction: column;
+                flex-wrap: wrap;*/
+                /*padding: 40px 48px;*/
                 padding-bottom: 40px;
                 background-color: #fff;
                 box-shadow: 4px 0px 20px 0px rgba(37,47,68,0.15);
@@ -348,6 +383,10 @@
                     &.column_count3{
                         column-count: 3;
                     }
+                    /*display: flex;
+                    flex-direction: column;
+                    flex-wrap: wrap;*/
+                    /*column-count: 3;*/
                     column-gap: 0;
                     padding-left: 48px;
                     padding-right: 12px;
@@ -383,6 +422,10 @@
         }
         /*底部展开、关闭按钮*/
        .hamburger_btn{
+            /*position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;*/
             position: fixed;
             left: 0;
             bottom: 0;

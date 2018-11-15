@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="icon" type="image/ico" href="/static/favicon.ico" />
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <router-view></router-view>
+    </div>
+
+    <!--生产模式下引用Fundebug.js检测代码bug问题-->
+    <%= htmlWebpackPlugin.options.jsFundebug %>
+
+    <!--使用DllPlugin打包公共文件,把dll生成的js引入到html中-->
+    <%= htmlWebpackPlugin.options.jsVendor %>
+</body>
+
+</html>
