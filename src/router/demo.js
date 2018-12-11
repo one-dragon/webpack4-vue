@@ -61,6 +61,21 @@ export const routes = [
                 noCache: false
             }
         }]
+    },
+    {
+        path: '/404',
+        component: () =>
+            import( /* webpackChunkName: "404" */ '~/pages/error/404'),
+        name: '404',
+        meta: {
+            title: '404',
+            icon: '404',
+            noCache: false
+        }
+    },
+    {
+        path: '*',
+        redirect: '/404'
     }
 ];
 

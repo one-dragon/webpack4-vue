@@ -55,6 +55,9 @@ const options = merge({
         	// npm run build时设置访问路径，默认为'/'
         	publicPath: '',
         },
+
+        // 设置别名，默认'@'、'~'都指向'./src'文件夹下，并且这两个不可替换，如果加入新的快捷别名请使用别的字符
+        alias: {},
         
         // 开发环境下默认打开地址为http://host:port/ 指向目录下的index.html，可修改为打开其他页面
         openPage: '',

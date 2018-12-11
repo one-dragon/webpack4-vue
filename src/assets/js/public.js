@@ -1,8 +1,8 @@
 /*
- * @Author: on-dragon
+ * @Author: one-dragon
  * @Date: 2018-11-14 11:00:02
- * @Last Modified by: on-dragon
- * @Last Modified time: 2018-11-15 19:11:32
+ * @Last Modified by: one-dragon
+ * @Last Modified time: 2018-12-11 20:58:08
  * description: 封装公共方法
  */
 
@@ -279,7 +279,6 @@ class $v {
         // console.log(catchError.response.data);
         // console.log(catchError.response.status);
         // console.log(catchError.response.headers);
-        // console.log('bbbb---------------------')
         // console.log(catchError.message);
         // console.log(catchError.response);
         try {
@@ -538,6 +537,7 @@ class TreeData {
      * labelVal: 匹配内容
      * label: 匹配内容的key字段
      * children: 子集的key字段
+     * treeStr: 字段匹配内容的连接的字符串，不传则使用label为匹配
      * callback: 匹配成功后的回调函数
      * currTree: 匹配内容的连接的字符串
      * totalArr: 总数据
@@ -547,6 +547,7 @@ class TreeData {
         labelVal,
         label,
         children,
+        treeStr,
         callback
     }, currTree = '', totalArr = []) {
         if (!data) {
@@ -562,24 +563,25 @@ class TreeData {
                 // 当前最顶层父级匹配的内容
                 let tree = '';
                 if (currTree == '') {
-                    tree = String(item[label]);
+                    tree = String(item[treeStr || label]);
                 } else {
                     tree = currTree;
                 }
                 totalArr.map((item2) => {
-                    if (item2[label] == tree.split('$&&$')[0]) {
+                    if (item2[treeStr || label] == tree.split('$&&$')[0]) {
                         currTotalObj = item2;
                     }
                 })
                 // 成功后返回数据: 当前对应的对象、当前同级的所有数据（数组返回）、当前最顶层父级所有数据、匹配内容的连接的字符串
-                callback ? callback(item, data, currTotalObj, currTree + item[label]) : '';
+                callback ? callback(item, data, currTotalObj, currTree + item[treeStr || label]) : '';
             } else {
-                let trees = currTree + item[label] + '$&&$';
+                let trees = currTree + item[treeStr || label] + '$&&$';
                 TreeData.get({
                     data: item[children],
                     labelVal,
                     label,
                     children,
+                    treeStr,
                     callback
                 }, trees, totalArr);
             }

@@ -18,8 +18,9 @@ const PurifyCSSPlugin = require('purifycss-webpack');
 
 const prodConfig = merge(baseConfig, {
 	mode: 'production',
-    //devtool: false,
-    devtool: 'hidden-source-map',
+    // devtool: false,
+    // devtool: 'hidden-source-map',
+    devtool: 'source-map',
     /*
     output: {
         filename: 'js/[name].[chunkhash:3].js',

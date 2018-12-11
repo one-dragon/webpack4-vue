@@ -1,8 +1,8 @@
 /*
- * @Author: on-dragon 
+ * @Author: one-dragon 
  * @Date: 2018-11-14 10:55:11 
- * @Last Modified by: on-dragon
- * @Last Modified time: 2018-11-15 19:54:49
+ * @Last Modified by: one-dragon
+ * @Last Modified time: 2018-12-11 21:26:29
  */
 <template>
     <el-scrollbar class="sidebar_box" :class="{'hide_sidebar' : !isOpenSidebar, 'hide_text': !isShowSidebarText}" wrap-class="scrollbar_wrapper" data-common-side-bar-box>
@@ -13,13 +13,21 @@
         </div>
         <ul class="menu_bar" ref="meuns">
             <li 
+                v-if="subMenu.children"
                 v-for="(subMenu, subMenuIndex) in $store.state.sideBar.data" 
                 :key="'subMenu' + subMenuIndex" 
                 @mouseenter="menuItemEnter(subMenuIndex)"
                 @mouseleave="menuItemLeave(subMenuIndex)">
                 <!--一级菜单-->
                 <div class="submenu">
-                    <i class="el-icon-menu" :title="subMenu.name"></i>
+                    <i class="el-icon-menu hidden" :title="subMenu.name"></i>
+                    <i :title="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0) ? subMenu.meta.title : subMenu.children[0].meta.title">
+                        <svg-icon 
+                            name="app"
+                            fill="#fff" 
+                            width="14" 
+                            height="14" />
+                    </i>
                     <!-- <router-link 
                         :to="subMenu.path" 
                         v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">
@@ -396,6 +404,7 @@
                     margin-right: 32px;
                     margin-bottom: 16px;
                     break-inside: avoid;
+                    page-break-inside: avoid;
                     dt{
                         margin-bottom: 10px;
                         line-height: 36px;

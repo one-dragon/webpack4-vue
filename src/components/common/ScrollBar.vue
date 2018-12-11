@@ -1,8 +1,8 @@
 /*
- * @Author: on-dragon 
+ * @Author: one-dragon 
  * @Date: 2018-11-14 10:55:51 
- * @Last Modified by: on-dragon
- * @Last Modified time: 2018-11-15 20:23:50
+ * @Last Modified by: one-dragon
+ * @Last Modified time: 2018-12-11 20:59:07
  */
 <template>
     <el-scrollbar 
@@ -13,14 +13,14 @@
         :viewClass="viewClass"
         :viewStyle="viewStyle"
         :noresize="noresize"
-        :tag="tag">
+        :tag="tag"
+        :style="{ height: minheight ? minheight + 'px' : ''}">
         <slot></slot>
     </el-scrollbar>
 </template>
 
 <script>
-    // import ResizeObserver from 'element-ui/node_modules/resize-observer-polyfill';
-    import ResizeObserver from 'resize-observer-polyfill';
+    import ResizeObserver from 'element-ui/node_modules/resize-observer-polyfill';
     export default {
         name: 'scrollbar',
         props: {
@@ -36,11 +36,15 @@
                 default: 'div'
             },
             // 自定义的props
-            horizontalSlide: Boolean // 是否启用鼠标滚轮滚动时，scrollbar的横向滑动滚动条进行滑动
+            horizontalSlide: Boolean, // 是否启用鼠标滚轮滚动时，scrollbar的横向滑动滚动条进行滑动
+            minHeight: Number,
+            maxHeight: Number
         },
         data() {
             return {
-                translateX: 0
+                translateX: 0,
+                minheight: this.minHeight,
+                maxheight: this.maxHeight
             }
         },
         methods: {
@@ -53,6 +57,16 @@
                     }
                 })
                 return horizontalBar;
+            },
+            // 获取纵向滚动条组件
+            getVerticalBar() {
+                let vertical = null;
+                this.$refs.scrollbar.$children.map((item) => {
+                    if(item.$el.className == 'el-scrollbar__bar is-vertical') {
+                        vertical = item;
+                    }
+                })
+                return vertical;
             },
             // 监听内容改变
             resizeHandler(entries) {
@@ -81,10 +95,55 @@
                 if (!element.__resizeListeners__.length) {
                     element.__ro__.disconnect();
                 }
+            },
+            hasRootElement(ele) {
+                if(Array.from(ele).length > 1) {
+                    throw new Error('ScrollBar component should contain exactly one root element. If you are using v-if on multiple elements, use v-else-if to chain them instead.');
+                }
+                return Array.from(ele)[0];
+            },
+            // 为了适配全局替换的ElSelect组件内调用scrollbar的方法
+            handleScroll() {
+                this.$refs.scrollbar && this.$refs.scrollbar.handleScroll();
             }
         },
         mounted() {
             let self = this;
+            // 判断是否传入maxheight，设置内容最大高度值
+            if(this.maxheight) {
+                this.$nextTick(() => {
+                    let scrollbar = this.$refs.scrollbar;
+                    let wrap = scrollbar.$el.querySelector('.el-scrollbar__wrap');
+                    let contentElem = wrap.querySelectorAll('.el-scrollbar__view > *');
+                    contentElem = this.hasRootElement(contentElem);
+                    let vertical = this.getVerticalBar();
+                    if(scrollbar.$el.style.height) {
+                        this.minheight = Number(scrollbar.$el.style.height.replace('px', ''));
+                    }
+                    this.addResizeListener(contentElem, () => {
+                        vertical.$el.style.visibility = 'hidden';
+                        setTimeout(() => {
+                            if(contentElem.offsetHeight < this.maxheight) { // 判断内容高度是否小于设置最大高度maxheight
+                                if(contentElem.offsetHeight > scrollbar.$el.offsetHeight) {
+                                    scrollbar.$el.style.height = (contentElem.offsetHeight + 40) + 'px';
+                                }
+                                if(this.minheight && contentElem.offsetHeight < this.minheight) {
+                                    scrollbar.$el.style.height = this.minheight ? this.minheight + 'px' : '';
+                                }else {
+                                    scrollbar.$el.style.height = (contentElem.offsetHeight + 40) + 'px';
+                                }
+                            }else if(contentElem.offsetHeight > this.maxheight) { // 内容高度是否大于设置最大高度maxheight
+                                scrollbar.$el.style.height = this.maxheight + 'px';
+                            }else {
+                                scrollbar.$el.style.height = this.minheight ? this.minheight + 'px' : '';
+                            }
+                            vertical.$el.style.visibility = 'visible';
+                        }, 0)
+                    });
+                })
+            }
+
+            // 横向滚动条，滑轮滚动效果
             if(!self.horizontalSlide) {
                 return;
             }
@@ -94,7 +153,9 @@
                 // 获取wrap元素
                 let wrap = scrollbar.$el.querySelector('.el-scrollbar__wrap');
                 // 获取加载的内容元素（view里的内容）
-                let contentElem = wrap.querySelector('.el-scrollbar__view > *');
+                let contentElem = wrap.querySelectorAll('.el-scrollbar__view > *');
+                // 判断ScrollBar是否只包含一个根元素,并返回当前元素
+                contentElem = self.hasRootElement(contentElem);
                 // 获取横向滚动条组件
                 let horizontalBar = self.getHorizontalBar();
                 // 监听加载的内容元素尺寸改变，如果改变调用el-scrollbar里的更新方法(update)加载出滚动条
