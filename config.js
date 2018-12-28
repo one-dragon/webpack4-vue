@@ -4,6 +4,19 @@ const path = require('path');
 
 module.exports = {
     build: {
+        // webpack链式配置
+        chainWebpack: config => {
+            // https://github.com/neutrinojs/webpack-chain/tree/v4
+            // 例子...
+            /*
+            config.module
+                .rule('svg')
+                .test(/ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/)
+                .use('file-loader')
+                .loader('raw-loader');
+            */
+        },
+
         // 针对build后分析并可视化构建后的打包文件，你可以基于分析结果来决定如何优化它，默认为false
         analyze: false,
 
@@ -32,6 +45,9 @@ module.exports = {
         // webpack加入插件
         plugins: [],
 
+        // postcss加入插件
+        postsccPlugins: [],
+
         // 如需修改请重新运行npm run dll打包公共js，默认:['vue', 'axios', 'vue-router', 'vuex']
         vendor: ['vue-i18n'],
 
@@ -39,7 +55,7 @@ module.exports = {
         useEslint: true,
 
         // 生成环境下是否使用fundebug,如果使用请传入创建项目时生成apikey，并运行npm run fundebug生成fundebug.js文件（生成一次好），默认空字符串为不使用
-        useFundebug: '',
+        useFundebug: 'e61d8875d099a74feb704e34ce2c9857a3bc84cefcaa8df9764a615994f7fc11',
 
         // webpack中的output设置
         output: {
@@ -50,7 +66,7 @@ module.exports = {
             // str 'js/[name].js' / fun (isDev) => { return isDev ? 'js/[name].js' : 'js/[name].[chunkhash:3].js' }
             chunkFilename: '',
             // npm run build时设置访问路径，默认为'/'
-            publicPath: '/'
+            publicPath: '/webpack4/dist/'
         },
 
         // 设置别名，默认'@'、'~'都指向'./src'文件夹下，并且这两个不可替换，如果加入新的快捷别名请使用别的字符
