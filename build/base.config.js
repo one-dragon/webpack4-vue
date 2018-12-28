@@ -4,11 +4,17 @@ const webpack = require('webpack');
 const { resolve, join, getBabelOptions, createLintingRule, isDev, entryJS } = require('./utils');
 const Options = require('./options');
 const OptionsBuild = Options.build;
-const styleLoader = require('./style-loader2');
-//const styleLoader = require('./style-loader');
+// const styleLoader = require('./style-loader2');
+const styleLoader = require('./style-loader');
 const vueLoader = require('./vue-loader');
 const vueLoaderPlugin = require('vue-loader/lib/plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const merge = require('webpack-merge');
+
+// webpack链式配置
+const WebpackChain = require('webpack-chain');
+const WebpackChainConfig = new WebpackChain();
+OptionsBuild.chainWebpack(WebpackChainConfig);
 
 const HappyPack = require('happypack');
 // 获取电脑的处理器有几个核心，作为配置传入
@@ -72,10 +78,10 @@ const baseConfig = {
                 ? OptionsBuild.babelInclude
                 : [ resolve(__dirname, '../src') ]
             },
-	        {
-        		test: /\.json$/,
-        		loader: 'json-loader'
-      		},
+	        // {
+        	// 	test: /\.json$/,
+        	// 	loader: 'json-loader'
+      		// },
       		{
                 // 使所有以 .json5 结尾的文件使用 `json5-loader`
                 test: /\.json5$/,
@@ -115,7 +121,7 @@ const baseConfig = {
                     limit: 1000, // 1KO
                     name: 'img/[name].[hash:7].[ext]'
                 },
-                exclude: resolve(__dirname, '../src/assets/icons_svg')
+                exclude: [resolve(__dirname, '../src/assets/icons_svg'), /node_modules/]
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
@@ -161,6 +167,8 @@ const baseConfig = {
                 options: getBabelOptions()
             }
         ]),
+
+        /*
         // 采用多进程去打包构建--css
         HappyPackFun('css', [
             {
@@ -201,7 +209,8 @@ const baseConfig = {
                 }
             }
         ]),
-    	
+        */
+
     	// 启用Dll
     	new webpack.DllReferencePlugin({
             context: join(__dirname, '..'),
@@ -248,7 +257,8 @@ const baseConfig = {
     }
 }
 
-module.exports = baseConfig;
+// module.exports = baseConfig;
+module.exports = merge(WebpackChainConfig.toConfig(), baseConfig);
 
 
 

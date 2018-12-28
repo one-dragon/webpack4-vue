@@ -4,7 +4,13 @@ const merge = require('webpack-merge');
 const config = require('../config');
 
 const options = merge({
-	build: {
+    build: {
+        // webpack链式配置
+        chainWebpack: (config) => {
+            // https://github.com/neutrinojs/webpack-chain/tree/v4
+            // ...
+        },
+
         // 针对build后分析并可视化构建后的打包文件，你可以基于分析结果来决定如何优化它，默认为false
         analyze: false,
         
@@ -34,6 +40,9 @@ const options = merge({
         
         // webpack加入插件
         plugins: [],
+
+        // postcss加入插件
+        postsccPlugins: [],
         
         // 如需修改请重新运行npm run dll打包公共js，默认:['vue', 'axios', 'vue-router', 'vuex']
         vendor: [],

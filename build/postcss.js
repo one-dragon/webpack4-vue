@@ -1,5 +1,6 @@
 
 const { join, isDev } = require('./utils');
+const Options = require('./options');
 //const createResolver = require('postcss-import-resolver');
 module.exports = function postcssConfig(isArr) {
     const pluginsArr = [
@@ -16,7 +17,8 @@ module.exports = function postcssConfig(isArr) {
         // require('postcss-url')();
         // require('postcss-cssnext')(),
         // require('cssnano')({ safe: true }),
-        require('autoprefixer')({browsers: ['last 5 versions', 'Firefox >= 51']}),
+        require('autoprefixer')({ browsers: ['last 5 versions', 'Firefox >= 51'] }),
+        ...(Options.build.postsccPlugins ? Options.build.postsccPlugins : [])
     ]
     return {
         sourceMap: isDev,
