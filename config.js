@@ -55,7 +55,7 @@ module.exports = {
         useEslint: true,
 
         // 生成环境下是否使用fundebug,如果使用请传入创建项目时生成apikey，并运行npm run fundebug生成fundebug.js文件（生成一次好），默认空字符串为不使用
-        useFundebug: 'e61d8875d099a74feb704e34ce2c9857a3bc84cefcaa8df9764a615994f7fc11',
+        useFundebug: '',
 
         // webpack中的output设置
         output: {
@@ -66,7 +66,7 @@ module.exports = {
             // str 'js/[name].js' / fun (isDev) => { return isDev ? 'js/[name].js' : 'js/[name].[chunkhash:3].js' }
             chunkFilename: '',
             // npm run build时设置访问路径，默认为'/'
-            publicPath: '/webpack4/dist/'
+            publicPath: '/'
         },
 
         // 设置别名，默认'@'、'~'都指向'./src'文件夹下，并且这两个不可替换，如果加入新的快捷别名请使用别的字符
