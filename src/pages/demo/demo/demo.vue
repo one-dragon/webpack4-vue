@@ -27,6 +27,7 @@
 
 <script>
     export default {
+        name: 'demoIndex',
         mounted() {
             // ajax调用实例
             let data = {};

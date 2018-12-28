@@ -61,8 +61,8 @@
             </template>
             <template slot="des">
                 <p>
-                                    在调用原生的<code>axios</code>不会判断返回接口的成功、失败，需要自己判断，传参方式，请按照axios官方文档传参<br />
-                                    地址：<a target="_blank" href="https://www.kancloud.cn/yunye/axios/234845">https://www.kancloud.cn/yunye/axios/234845</a>
+                    在调用原生的<code>axios</code>不会判断返回接口的成功、失败，需要自己判断，传参方式，请按照axios官方文档传参<br />
+                    地址：<a target="_blank" href="https://www.kancloud.cn/yunye/axios/234845">https://www.kancloud.cn/yunye/axios/234845</a>
                 </p>
             </template>
             <template slot="body">

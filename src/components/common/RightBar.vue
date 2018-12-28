@@ -2,19 +2,29 @@
  * @Author: one-dragon 
  * @Date: 2018-11-14 10:55:40 
  * @Last Modified by: one-dragon
- * @Last Modified time: 2018-12-11 21:01:22
+ * @Last Modified time: 2018-12-27 21:48:51
  */
 <template>
     <div data-right-bar-box>
         <ul class="menu">
             <li>
-                <el-input
+                <el-autocomplete
                     class="search_input"
+                    popper-class="search_popper"
+                    v-model="searchVal"
+                    :fetch-suggestions="querySearch"
                     placeholder="请输入搜索内容"
-                    @blur="isOpenSearch(false)"
-                    ref="searchInput">
-                    <!-- <i slot="suffix" class="el-input__icon el-icon-search"></i> -->
-                </el-input>
+                    :trigger-on-focus="false"
+                    :debounce="300"
+                    value-key="menuName"
+                    ref="searchInput"
+                    @select="querySelect"
+                    @blur="isOpenSearch(false)">
+                    <template slot-scope="slotProps">
+                        <!-- {{slotProps}} -->
+                        <div v-html="queryFilter(slotProps)"></div>
+                    </template>
+                </el-autocomplete>
                 <svg-icon @click.native="isOpenSearch(true)" class="search_icon" name="search" fill="#8898AC" width="16" height="16" />
                 <svg-icon @click.native="isOpenSearch(false)" class="close_icon" name="close" fill="#8898AC" width="16" height="16" />
             </li>
@@ -59,12 +69,51 @@
 </template>
 
 <script>
+    import { TreeData } from '~/assets/js/public';
     export default {
         name: 'rightBar',
         data() {
-            return {}
+            return {
+                // 搜索关键字
+                searchVal: ''
+            }
         },
         methods: {
+            // 选择搜索内容，进行路由跳转
+            querySelect(item) {
+                // 路由数据路由跳转
+                TreeData.get({
+                    // data: this.$router.options.routes,
+                    data: this.$store.state.sideBar.data,
+                    labelVal: item.name,
+                    label: 'name',
+                    children: 'children',
+                    treeStr: 'path',
+                    callback: (item, data, currTotalObj, str) => {
+                        this.$router.push(str.split('$&&$').join('/').replace('//', '/'));
+                    }})
+            },
+            // 建议数据进行转换成选中的html
+            queryFilter(data) {
+                let val = data.item.meta.title; // 路由数据获取
+                // 不区分大小写替换
+                return val.replace(new RegExp(`(${this.searchVal})`, 'i'), (word) => {
+                    return `<span class="active">${word}</span>`
+                });
+            },
+            // 搜索框搜索菜单数据过滤
+            querySearch(queryString, cb) {
+                queryString = queryString.toLowerCase();
+                let arr = this.$store.state.sideBar.dataParallel.filter((item) => {
+                    // 路由数据过滤
+                    if(item.meta && item.meta.title && item.meta.title.toLowerCase().indexOf(queryString) > -1) {
+                    // item.menuName = item.meta.title.replace(queryString, `<span class="active">${queryString}</span>`);
+                        return item;
+                    }
+                })
+                cb(arr);
+            },
+            // 是否展开搜索框
             isOpenSearch(boolean) {
                 if(boolean) {
                     document.querySelector('.default_layout_header').classList.add('search_mode');
@@ -80,6 +129,13 @@
 </script>
 
 <style lang="scss">
+    // 搜索结果框样式
+    .el-autocomplete-suggestion.el-popper.search_popper{
+        li div span.active{
+            // color: rgba(25,74,242,1);
+            color: rgba(0,162,249,1);
+        }
+    }
     div[data-right-bar-box]{
         ul{
             height: 100%;

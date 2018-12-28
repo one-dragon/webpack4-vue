@@ -2,6 +2,7 @@
     <div class="tags_view clear_fix" data-common-tags-view-box>
         <draggable v-model="dragTagsData" class="drag_box clear_fix" ref="tagsDragBox">
             <el-tag
+                v-if="!tag.hidden"
                 :title="tag.meta.title"
                 v-for="tag in tagsData"
                 :key="tag.path"
@@ -25,6 +26,7 @@
 <script>
     import { mapState } from 'vuex';
     import draggable from 'vuedraggable';
+    import { TreeData } from '~/assets/js/public';
     
     export default {
         name: 'tagsview',
@@ -62,6 +64,32 @@
                 if (!route) {
                     return false;
                 }
+                // 如果当前路由为三级、三级以上菜单时，需要将之前的父级的name名加入到vuex中，并设置hidden: true，在标签循环中不显示
+                let self = this;
+                TreeData.get({
+                    data: this.$router.options.routes,
+                    labelVal: route.name,
+                    label: 'name',
+                    treeStr: 'name',
+                    children: 'children',
+                    callback(item, data, currTotalObj, treeStr) {
+                        treeStr.split('$&&$').map((item, index) => {
+                            if(index != 0 && index != treeStr.split('$&&$').length - 1) {
+                                TreeData.get({
+                                    data: self.$router.options.routes,
+                                    labelVal: item,
+                                    label: 'name',
+                                    children: 'children',
+                                    callback(item, data, currTotalObj, treeStr) {
+                                        let obj = JSON.parse(JSON.stringify(item));
+                                        obj.hidden = true;
+                                        self.$store.commit('tagsView/ADD_DATA', obj);
+                                    }
+                                })
+                            }
+                        })
+                    }
+                })
                 this.$store.dispatch('tagsView/addData', route).then(() => {
                     // console.log('this.$store.state.tagsView.data');
                     // console.log(this.$store.state.tagsView.data);
@@ -83,7 +111,21 @@
                 this.$store.dispatch('tagsView/delData', route).then((list) => {
                     // 如果是关闭当前选中的tag时，判断跳转路由
                     if(this.isActive(route)) {
-                        const latestRoute = list.slice(-1)[0];
+                        // const latestRoute = list.slice(-1)[0];
+                        // if(latestRoute) {
+                        //     this.$router.push(latestRoute);
+                        // }else {
+                        //     this.$router.push('/');
+                        // }
+                        // 因为vuex数据中可能存在hidden: true的路由信息，所有需要循环排除掉，从尾部开始
+                        let latestRoute = null;
+                        for(let i = list.length - 1; i >= 0; i--) {
+                            if(!list[i].hidden) {
+                                latestRoute = list[i];
+                                break;
+                            }
+                        }
+                        // const latestRoute = list.slice(-1)[0];
                         if(latestRoute) {
                             this.$router.push(latestRoute);
                         }else {
