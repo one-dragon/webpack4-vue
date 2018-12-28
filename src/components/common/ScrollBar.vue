@@ -2,7 +2,7 @@
  * @Author: one-dragon 
  * @Date: 2018-11-14 10:55:51 
  * @Last Modified by: one-dragon
- * @Last Modified time: 2018-12-11 20:59:07
+ * @Last Modified time: 2018-12-28 10:28:42
  */
 <template>
     <el-scrollbar 
@@ -20,7 +20,8 @@
 </template>
 
 <script>
-    import ResizeObserver from 'element-ui/node_modules/resize-observer-polyfill';
+    // import ResizeObserver from 'element-ui/node_modules/resize-observer-polyfill';
+    import ResizeObserver from 'resize-observer-polyfill';
     export default {
         name: 'scrollbar',
         props: {
