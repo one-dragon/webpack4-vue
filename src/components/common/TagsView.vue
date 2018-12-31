@@ -109,6 +109,8 @@
                 }
                 // 删除vuex中的tagsView数据中的当前路由
                 this.$store.dispatch('tagsView/delData', route).then((list) => {
+                    // 关闭tag时，往关闭tag数据(closeData)添加当前的路由数据(暂时添加的是路由的path值)
+                    this.$store.commit('tagsView/ADD_CLOSE_DATA', route);
                     // 如果是关闭当前选中的tag时，判断跳转路由
                     if(this.isActive(route)) {
                         // const latestRoute = list.slice(-1)[0];

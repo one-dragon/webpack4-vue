@@ -32,12 +32,12 @@ export const routes = [
         path: '/svg_icon',
         component: LayoutDefault,
         redirect: '/svg_icon/index',
-        name: 'svg-icon',
+        name: 'svgicon',
         children: [{
             path: 'index',
             component: () =>
                 import ( /* webpackChunkName: "svgIcon" */ '~/pages/demo/svg_icon'),
-            name: 'svgIconIndex',
+            name: 'svg-icons',
             meta: {
                 title: 'svg图标使用',
                 icon: 'icon',
@@ -54,7 +54,7 @@ export const routes = [
             path: 'index',
             component: () =>
                 import( /* webpackChunkName: "ajaxExample" */ '~/pages/demo/ajax_example'),
-            name: 'ajax_example',
+            name: 'ajax-example',
             meta: {
                 title: 'ajax使用',
                 icon: 'icon',

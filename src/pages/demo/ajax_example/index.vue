@@ -148,7 +148,7 @@
 <script>
     import ExampleDemo from '~/components/common/ExampleDemo';
     export default {
-        name: 'ajax_example',
+        name: 'ajax-example',
         data() {
             return {}
         },

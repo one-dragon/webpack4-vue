@@ -37,7 +37,7 @@
         return item.split('.svg')[0].split('./')[1];
     })
     export default {
-        name: 'svg_icon',
+        name: 'svg-icons',
         data() {
             return {
                 icons: icons

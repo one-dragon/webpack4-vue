@@ -5,7 +5,9 @@ const namespaced = {
 
 const state = {
     data: [],
-    cacheData: []
+    cacheData: [],
+    // 关闭tag的path值
+    closeData: []
 }
 
 // 调用函数改变state里的值
@@ -25,6 +27,18 @@ const mutations = {
         if (!obj.meta.noCache) {
             state.cacheData.push(obj.name);
         }
+
+        // 打开新的tag时，查找关闭tag数组(closeData)中是否有匹配数据，有则删除
+        state.closeData.forEach((item, index) => {
+            if (item == obj.path) {
+                state.closeData.splice(index, 1);
+            }
+        });
+    },
+    // 关闭tabs的路由地址
+    ADD_CLOSE_DATA(state, obj) {
+        if (state.data.some(v => v.path === obj.path)) return;
+        state.closeData.push(obj.path);
     },
     // 删除tabs
     DEL_DATA(state, obj) {
