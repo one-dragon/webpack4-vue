@@ -2,7 +2,7 @@
  * @Author: one-dragon
  * @Date: 2018-11-14 11:00:02
  * @Last Modified by: one-dragon
- * @Last Modified time: 2018-12-11 20:58:08
+ * @Last Modified time: 2019-01-16 16:44:53
  * description: 封装公共方法
  */
 
@@ -711,6 +711,65 @@ let scrollAnimate = function (elem, direction, num, speed, cb) {
     }, 30)
 }
 
+// 操作对象的一些公共方法
+class Obj {
+    // 设置对象属性
+    // 把对象 { a: 2 } 设置成 { a: { aa: 1 } } => Obj.set(obj, 'a.aa', 1)
+    static set(obj, sKey, val) {
+        if (!sKey || obj.toString() != '[object Object]') return;
+        let tempObj = obj;
+        let keyArr = sKey.split('.');
+        let len = keyArr.length - 1;
+        for (let i = 0; i <= len; ++i) {
+            let key = keyArr[i];
+            if (i == len) {
+                tempObj[key] = val;
+            } else {
+                if (key in tempObj) {
+                    tempObj = tempObj[key] = tempObj[key].toString() == '[object Object]' ? tempObj[key] : {};
+                } else {
+                    tempObj = tempObj[key] = {};
+                }
+            }
+        }
+    }
+    // 通过 对象obj 和 字符串'a.b.c'， 判断是否能获取最终结果, 其中is为是否跟踪到最后一个
+    // { a: { aa: 1 } } => isGet(obj, 'a.aa') => { o: obj, k: 'aa', v: 1, is: true }
+    // { a: { aa: 1 } } => isGet(obj, 'a.aa.aaa') => { o: obj, k: 'aa', v: 1, is: false }
+    static isGet(obj, sKey) {
+        if (!sKey || obj.toString() != '[object Object]') {
+            return { o: obj, k: null, v: null, is: false }
+        }
+        let keyArr = sKey.split('.');
+        let tempObj = obj;
+        let is = true;
+        let i = 0;
+        for (let len = keyArr.length; i < len; ++i) {
+            let key = keyArr[i];
+            if (tempObj.toString() == '[object Object]' && key in tempObj) {
+                tempObj = tempObj[key];
+            } else {
+                is = false;
+                break;
+            }
+        }
+        return {
+            // i: i - 1,
+            // t: tempObj,
+            // v: tempObj ? tempObj.toString() == '[object Object]' ? tempObj[keyArr[i - 1]] : tempObj : null,
+            o: obj,
+            k: keyArr[i - 1],
+            v: tempObj,
+            is
+        }
+    }
+}
+
+// 操作数组的一些公共方法
+class Arr {
+
+}
+
 export {
     $v,
     PromptBox,
@@ -723,5 +782,7 @@ export {
     Local,
     imgSrcTo,
     ScrollbarTo,
-    scrollAnimate
+    scrollAnimate,
+    Obj,
+    Arr
 }
