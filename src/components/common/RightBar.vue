@@ -2,7 +2,7 @@
  * @Author: one-dragon 
  * @Date: 2018-11-14 10:55:40 
  * @Last Modified by: one-dragon
- * @Last Modified time: 2018-12-27 21:48:51
+ * @Last Modified time: 2019-01-16 17:44:12
  */
 <template>
     <div data-right-bar-box>
@@ -91,7 +91,8 @@
                     treeStr: 'path',
                     callback: (item, data, currTotalObj, str) => {
                         this.$router.push(str.split('$&&$').join('/').replace('//', '/'));
-                    }})
+                    }
+                })
             },
             // 建议数据进行转换成选中的html
             queryFilter(data) {
