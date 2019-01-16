@@ -121,7 +121,7 @@ exports.entryHtml = (config, resolve) => {
 		        chunksSortMode: 'none',
 		        chunks: ['manifest', 'babel-runtime', jsName],
 		    }
-			// 生成模式
+			// 生产模式
 			if(!isDev) {
 		    	htmlOptions.minify = {				//压缩HTML文件
 		    		removeComments: true,           //移除HTML中的注释
@@ -138,7 +138,16 @@ exports.entryHtml = (config, resolve) => {
 		    	htmlOptions.jsVendor = jsVendor 
 	            ? `<script src="http://${Options.local.host}:${Options.local.port}/static/vendor/${jsVendor}"></script>` 
 	            : '';
-		    }
+			}
+			
+			// 设置HtmlWebpackPlugin插件配置选项
+			if (typeof Options.build.htmlOptions == 'function') {
+				let host = !isDev ? Options.build.output.publicPath || '/' : `http://${Options.local.host}:${Options.local.port}/`;
+				Options.build.htmlOptions(htmlOptions, { isDev, host });
+			} else if (typeof Options.build.htmlOptions == 'object') {
+				htmlOptions = Object.assign({}, htmlOptions, Options.build.htmlOptions);
+			}
+
 		    config.plugins.push(
 	            // html打包，引入入口js文件
 	            new HtmlWebpackPlugin(htmlOptions)
