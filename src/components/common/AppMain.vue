@@ -2,7 +2,7 @@
     <section class="app_main" data-common-app-main-box>
         <transition name="fade-transform" mode="out-in">
             <keep-alive :include="cachedTagsData">
-                <router-view :key="key" ref="routerView" />
+                <router-view :key="key" ref="routerView" v-if="isShow" />
             </keep-alive>
         </transition>
     </section>
@@ -15,13 +15,15 @@
         data() {
             return {
                 // 记录每次路由跳转时的pathKey: key数据
-                keepAliveKey: {} // {} => pathKey: key
+                keepAliveKey: {}, // {} => pathKey: key
+                isShow: true
             }
         },
         computed: {
             ...mapState({
                 cachedTagsData: state => state.tagsView.cacheData,
-                closeTagsData: state => state.tagsView.closeData
+                closeTagsData: state => state.tagsView.closeData,
+                refresh: state => state.tagsView.refresh
             }),
             key() {
                 return this.$route.fullPath;
@@ -39,6 +41,10 @@
                     let key = this.keepAliveKey[pathKey];
                     this.clear(key, pathKey);
                 }
+            },
+            // 监听vuex的refresh值，调用刷新当前路由函数
+            refresh() {
+                this.refreshRoute();
             }
         },
         mounted() {
@@ -81,6 +87,35 @@
                         delete cache[key];
                     }
                 }
+            },
+            // 刷新当前路由(数据重置，如果要重置vuex数据， 请在配置路由时，配置meta.storeName, 并在对应vuex文件中写入CLEAR_DATA方法重置数据)
+            refreshRoute() {
+                let routerView = this.$refs.routerView;
+                let route = this.$route;
+                // 清除当前路由对应的vuex数据
+                if(route.meta && route.meta.storeName) {
+                    if(this.$store._mutations[`${route.meta.storeName}/CLEAR_DATA`]) {
+                        this.$store.commit(`${route.meta.storeName}/CLEAR_DATA`);
+                    }
+                }
+                // 删除缓存数据、添加关闭数据
+                this.$store.commit('tagsView/DEL_CACHE_ADD_CLOSE', route);
+                // 记录key、pathKey到keepAliveKey对象中
+                this.recordPath();
+                // keep-alive清除
+                let pathKey = this.closeTagsData[this.closeTagsData.length - 1];
+                let key = this.keepAliveKey[pathKey];
+                this.clear(key, pathKey);
+                // 让router-view组件销毁
+                this.isShow = false;
+                // dom渲染完后，并在setTimeout后，重新渲染router-view组件
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        // 添加缓存数据、删除关闭数据
+                        this.$store.commit('tagsView/ADD_CACHE_DEl_CLOSE', route);
+                        this.isShow = true;
+                    }, 600)
+                })
             }
         }
     }

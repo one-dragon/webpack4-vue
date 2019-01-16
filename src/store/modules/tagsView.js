@@ -7,7 +7,9 @@ const state = {
     data: [],
     cacheData: [],
     // 关闭tag的path值
-    closeData: []
+    closeData: [],
+    // 刷新路由组件
+    refresh: false
 }
 
 // 调用函数改变state里的值
@@ -16,7 +18,7 @@ const mutations = {
     CHANGE_DATA(state, arr) {
         state.data = arr;
     },
-    // 添加tabs
+    // 添加tags、添加cache数据、删除关闭数据
     ADD_DATA(state, obj) {
         if (state.data.some(v => v.path === obj.path)) return;
         state.data.push(
@@ -40,7 +42,7 @@ const mutations = {
         if (state.data.some(v => v.path === obj.path)) return;
         state.closeData.push(obj.path);
     },
-    // 删除tabs
+    // 删除tags、删除cache数据
     DEL_DATA(state, obj) {
         for(const [i, v] of state.data.entries()) {
             if (v.path === obj.path) {
@@ -55,6 +57,32 @@ const mutations = {
                 break;
             }
         }
+    },
+    // 添加缓存数据、删除关闭数据
+    ADD_CACHE_DEl_CLOSE(state, obj) {
+        if (!obj.meta.noCache) {
+            state.cacheData.push(obj.name);
+        }
+        state.closeData.forEach((item, index) => {
+            if (item == obj.path) {
+                state.closeData.splice(index, 1);
+            }
+        });
+    },
+    // 删除缓存数据、添加关闭数据
+    DEL_CACHE_ADD_CLOSE(state, obj) {
+        for (let i of state.cacheData) {
+            if (i === obj.name) {
+                const index = state.cacheData.indexOf(i);
+                state.cacheData.splice(index, 1);
+                break;
+            }
+        }
+        state.closeData.push(obj.path);
+    },
+    // 改变refresh数据
+    CHANGE_REFRESH(state) {
+        state.refresh = !state.refresh;
     }
 }
 

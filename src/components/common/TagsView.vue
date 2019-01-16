@@ -10,6 +10,9 @@
                 closable
                 :disable-transitions="false"
                 @close="handleClose(tag)">
+                <i class="refresh_icon" v-if="isActive(tag)" @click.stop="refreshRoute" ref="refreshIcon">
+                    <svg-icon name="refresh" fill="#fff" width="12" height="12" />
+                </i>
                 <router-link :to="tag.path">{{ tag.meta.title }}</router-link>
             </el-tag>
         </draggable>
@@ -136,6 +139,15 @@
                     }
                 })
             },
+            // 刷新路由
+            refreshRoute() {
+                this.$store.commit('tagsView/CHANGE_REFRESH');
+                let refreshIcon = this.$refs.refreshIcon[0];
+                refreshIcon.classList.add('refresh_icon_anim');
+                setTimeout(() => {
+                    refreshIcon.classList.remove('refresh_icon_anim');
+                }, 1000)
+            },
             // 通过标签页外的宽度判断标签页的的宽度是否改变
             changeTagsWidth() {
                 // 获取tags的父级box
@@ -192,6 +204,17 @@
             &.active{
                 background: rgba(24,117,240,1);
                 border: 1px solid rgba(24,117,240,1);
+                .refresh_icon{
+                    margin-left: 8px;
+                    cursor: pointer;
+                    svg{
+                        display: block;
+                    }
+                }
+                .refresh_icon_anim{
+                    transition: transform 1s ease-in-out;   
+                    transform: rotate(720deg);
+                }
                 > a{
                     color: #fff;
                 }

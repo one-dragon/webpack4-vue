@@ -2,7 +2,7 @@
  * @Author: one-dragon 
  * @Date: 2018-11-14 10:54:18 
  * @Last Modified by: one-dragon
- * @Last Modified time: 2018-12-31 13:24:59
+ * @Last Modified time: 2019-01-16 17:17:01
  */
 <template>
     <div class="tags_view clear_fix" data-common-tags-view2-box>
@@ -17,6 +17,9 @@
                     closable
                     :disable-transitions="false"
                     @close="handleClose(tag)">
+                    <i class="refresh_icon" v-if="isActive(tag)" @click.stop="refreshRoute" ref="refreshIcon">
+                        <svg-icon name="refresh" fill="#606266" width="12" height="12" />
+                    </i>
                     <router-link :to="tag.path">{{ tag.meta.title }}</router-link>
                 </el-tag>
             </draggable>
@@ -175,6 +178,15 @@
                     }
                 })
             },
+            // 刷新路由
+            refreshRoute() {
+                this.$store.commit('tagsView/CHANGE_REFRESH');
+                let refreshIcon = this.$refs.refreshIcon[0];
+                refreshIcon.classList.add('refresh_icon_anim');
+                setTimeout(() => {
+                    refreshIcon.classList.remove('refresh_icon_anim');
+                }, 1000)
+            },
             // 通过标签页外的宽度判断标签页的的宽度是否改变
             changeTagsWidth() {
                 // 获取tags的父级box
@@ -274,6 +286,17 @@
                 // border: 1px solid rgba(24,117,240,1);
                 background: #F3F6FA;
                 border: 1px solid #F3F6FA;
+                .refresh_icon{
+                    margin-left: 8px;
+                    cursor: pointer;
+                    svg{
+                        display: block;
+                    }
+                }
+                .refresh_icon_anim{
+                    transition: transform 1s ease-in-out;   
+                    transform: rotate(720deg);
+                }
                 > a{
                     // color: #fff;
                     color: #454D58;
