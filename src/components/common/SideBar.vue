@@ -16,8 +16,9 @@
                 v-if="subMenu.children"
                 v-for="(subMenu, subMenuIndex) in $store.state.sideBar.data" 
                 :key="'subMenu' + subMenuIndex" 
-                @mouseenter="menuItemEnter(subMenuIndex)"
-                @mouseleave="menuItemLeave(subMenuIndex)">
+                :ref="'menuLi' + subMenuIndex"
+                @mouseenter="menuItemEnter(subMenuIndex, 'menuLi' + subMenuIndex)"
+                @mouseleave="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)">
                 <!--一级菜单-->
                 <div class="submenu">
                     <i class="el-icon-menu hidden" :title="subMenu.name"></i>
@@ -126,30 +127,34 @@
             }
         },
         methods: {
-            // 鼠标进入菜单
-            menuItemEnter(index) {
+            // 清除菜单里的class
+            clearClassName() {
                 let menu = this.$refs.meuns;
                 let menuList = Array.from(menu.querySelectorAll('li'));
-                // menuList.map((item) => {
-                // item.className = '';
-                // })
-                menuList[index].className = 'is';
+                menuList.forEach(elm => {
+                    elm.className = '';
+                })
+            },
+            // 鼠标进入菜单
+            menuItemEnter(index, currRef) {
+                this.clearClassName();
+                let currMenuLi = this.$refs[currRef][0];
+                currMenuLi.className = 'is';
                 setTimeout(() => {
-                    if(menuList[index].className == 'is') {
-                        menuList[index].className = 'active slide_in';
+                    if(currMenuLi.className == 'is') {
+                        currMenuLi.className = 'active slide_in';
                         setTimeout(() => {
-                            menuList[index].className = 'active';
+                            currMenuLi.className = 'active';
                         }, 100)
                     }
                 }, 300)
             },
             // 鼠标离开菜单
-            menuItemLeave(index) {
-                let menu = this.$refs.meuns;
-                let menuList = Array.from(menu.querySelectorAll('li'));
-                menuList[index].className += ' slide_out';
+            menuItemLeave(index, currRef) {
+                let currMenuLi = this.$refs[currRef][0];
+                currMenuLi.className += ' slide_out';
                 setTimeout(() => {
-                    menuList[index].className = '';
+                    currMenuLi.className = '';
                 }, 80)
             },
             // 底部汉堡按钮点击事件
