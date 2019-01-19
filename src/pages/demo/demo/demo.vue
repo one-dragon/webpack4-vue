@@ -1,8 +1,6 @@
 <template>
     <div data-pages-index-box>
         <div class="common_width">
-            <!-- <em-ckeditor4 v-model="ckeditor4"></em-ckeditor4> -->
-            <em-ckeditor5 v-model="ckeditor5"></em-ckeditor5>
             <el-row>
                 <el-col :xs="24" :sm="24" :md="8" :lg="8" :xl="8">
                     <img src="../../../assets/img/logo.png" />
@@ -28,18 +26,7 @@
 </template>
 
 <script>
-    import Vue from 'vue';
-    import { ckeditor4, ckeditor5 } from 'embed-ui';
-    Vue.use(ckeditor4);
-    Vue.use(ckeditor5);
-
     export default {
-        data() {
-            return {
-                ckeditor4: 'ckeditor4',
-                ckeditor5: 'ckeditor5'
-            }
-        },
         name: 'demoIndex',
         mounted() {
             // ajax调用实例
