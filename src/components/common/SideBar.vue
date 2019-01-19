@@ -50,7 +50,7 @@
                             <dl v-for="(childMenu, childMenuIndex) in subMenu.children" :key="'childMenu' + childMenuIndex">
                                 <dt>
                                     <router-link 
-                                        @click.native="menuItemLeave(subMenuIndex)" 
+                                        @click.native="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)" 
                                         :to="subMenu.path == '/' ? '/' + childMenu.path : subMenu.path + '/' + childMenu.path" 
                                         v-if="!childMenu.children || childMenu.children.length == 0">
                                         {{ childMenu.meta.title }}
@@ -59,7 +59,7 @@
                                 </dt>
                                 <dd>
                                     <router-link 
-                                        @click.native="menuItemLeave(subMenuIndex)"
+                                        @click.native="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)"
                                         :to="subMenu.path + '/' + childMenu.path + '/' + childMenuItem.path" 
                                         v-for="(childMenuItem, childMenuItemIndex) in childMenu.children"
                                         :key="'childMenuItem' + childMenuItemIndex">
