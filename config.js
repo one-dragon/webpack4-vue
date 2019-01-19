@@ -1,20 +1,20 @@
 
 
 const path = require('path');
+const CKEditorWebpackPlugin = require('@ckeditor/ckeditor5-dev-webpack-plugin');
+const { styles } = require('@ckeditor/ckeditor5-dev-utils');
 
 module.exports = {
     build: {
         // webpack链式配置
         chainWebpack: config => {
             // https://github.com/neutrinojs/webpack-chain/tree/v4
-            // 例子...
-            /*
+            // ckeditor5
             config.module
                 .rule('svg')
                 .test(/ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/)
                 .use('file-loader')
                 .loader('raw-loader');
-            */
         },
 
         // 针对build后分析并可视化构建后的打包文件，你可以基于分析结果来决定如何优化它，默认为false
@@ -27,26 +27,66 @@ module.exports = {
         },
 
         // 设置babel-loader里的include选项，默认为include为src目录[ path.resolve(__dirname, '../src') ]
-        babelInclude: [],
+        babelInclude: [ path.resolve(__dirname, './src'), /ckeditor5-[^/\\]+[/\\]src[/\\].+\.js$/ ],
 
         // js编译设置
         babel: {
-            'plugins': [
+            plugins: [
                 [
                     'component',
-                    {
-                        'libraryName': 'element-ui',
-                        'styleLibraryName': 'theme-chalk'
-                    }
+                    [
+                        {
+                            libraryName: 'element-ui',
+                            styleLibraryName: 'theme-chalk'
+                        },
+                        {
+                            libraryName: 'embed-ui',
+                            libDir: 'packages',
+                            camel2Dash: true,
+                            style: false
+                        }
+                    ]
                 ]
             ]
         },
 
         // webpack加入插件
-        plugins: [],
+        plugins: [
+            new CKEditorWebpackPlugin({
+                // See https://ckeditor.com/docs/ckeditor5/latest/features/ui-language.html
+                // language: 'en'
+                // Main language that will be built into the main bundle.
+                language: 'zh-cn',
+
+                // Additional languages that will be emitted to the `outputDirectory`.
+                // This option can be set to an array of language codes or `'all'` to build all found languages.
+                // The bundle is optimized for one language when this option is omitted.
+                // additionalLanguages: 'all'
+                additionalLanguages: ['en', 'zh-cn']
+
+                // Optional directory for emitted translations. Relative to the webpack's output.
+                // Defaults to `'translations'`.
+                // outputDirectory: 'static/ckeditor5-translations',
+
+                // Whether the build process should fail if an error occurs.
+                // Defaults to `false`.
+                // strict: true,
+
+                // Whether to log all warnings to the console.
+                // Defaults to `false`.
+                // verbose: true
+            })
+        ],
 
         // postcss加入插件
-        postsccPlugins: [],
+        postsccPlugins: [
+            ...styles.getPostCssConfig({
+                themeImporter: {
+                    themePath: require.resolve('@ckeditor/ckeditor5-theme-lark')
+                },
+                minify: true
+            }).plugins
+        ],
 
         // 如需修改请重新运行npm run dll打包公共js，默认:['vue', 'axios', 'vue-router', 'vuex']
         vendor: ['vue-i18n'],
@@ -70,13 +110,22 @@ module.exports = {
         },
 
         // 设置别名，默认'@'、'~'都指向'./src'文件夹下，并且这两个不可替换，如果加入新的快捷别名请使用别的字符
-        alias: {},
+        alias: {
+            'embed-ui': path.join(__dirname, './src/components/embed-ui')
+        },
 
         // 开发环境下默认打开地址为http://host:port/ 指向目录下的index.html，可修改为打开其他页面
         openPage: 'index.html',
 
         // 设置HtmlWebpackPlugin插件配置选项，当前参数可为objec或function；htmlOptions: {}; htmlOptions(config, { isDev, host }) {}
-        htmlOptions: {},
+        // htmlOptions: {},
+        htmlOptions(config, { isDev, host }) {
+            // 设置ckEditor的语言包 在html中加载对应的js文件
+            config.jsCkEditor5Languages = `
+                <script src="${host}translations/zh-cn.js"></script>
+                <script src="${host}translations/en.js"></script>
+            `
+        },
 
         // 设置入口html文件和对应的js文件，默认指向src文件夹路径('./src')
         entry: [

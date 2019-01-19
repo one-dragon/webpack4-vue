@@ -10,6 +10,12 @@
     -webkit-tap-highlight-color: transparent; /* For some Androids,个人感觉是低版本的安卓，4.0以下 */
     -webkit-overflow-scrolling : touch; 
 }
+
+body{
+    height: 100vh;
+    overflow: hidden;
+}
+
 button,
 input {
     outline: none;
