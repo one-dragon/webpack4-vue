@@ -2,7 +2,7 @@
  * @Author: one-dragon
  * @Date: 2018-11-14 11:00:02
  * @Last Modified by: one-dragon
- * @Last Modified time: 2019-01-16 16:44:53
+ * @Last Modified time: 2019-01-19 10:46:20
  * description: 封装公共方法
  */
 
@@ -606,12 +606,30 @@ class GetUrlPara {
 
 // 日期转换
 class DateFormat {
+    // 获取标准时间格式: Fri Jan 18 2019 17:38:16 GMT+0800 (中国标准时间)
+    static getStandardTime(val) {
+        let date;
+        if (typeof val == 'string') {
+            val = val.replace(/-/g, '/');
+            date = new Date(val);
+        }
+        if (typeof val == 'number') {
+            date = new Date(val);
+        }
+        if (typeof val == 'object') {
+            date = val;
+        }
+        return date;
+    }
+    // 获取日期格式: yyyy-mm-dd
     static get(val) {
+        val = DateFormat.getStandardTime(val);
         let y = val.getFullYear();
         let m = ('0' + (val.getMonth() + 1)).substr(-2);
         let d = ('0' + val.getDate()).substr(-2);
         return `${y}-${m}-${d}`;
     }
+    // 获取日期时间格式: yyyy-mm-dd hh:mm:ss
     static getFull(val) {
         let date = DateFormat.get(val);
         // 获取小时数(0-23)
@@ -622,10 +640,17 @@ class DateFormat {
         let sec = ('0' + val.getSeconds()).substr(-2);
         return `${date} ${hou}:${min}:${sec}`
     }
-    static getBeginMonth(val) {
-        let y = val.getFullYear();
-        let m = ('0' + (val.getMonth() + 1)).substr(-2);
-        return `${y}-${m}-01`;
+    // 获取指定日份的日期时间格式: yyyy-mm-dd hh:mm:ss
+    static getSpecifiedDay(date, num) {
+        date = DateFormat.getStandardTime(date);
+        date.setDate(date.getDate() + num);
+        return DateFormat.getFull(date);
+    }
+    // 获取指定月份的日期时间格式: yyyy-mm-dd hh:mm:ss
+    static getSpecifiedMonth(date, num) {
+        date = DateFormat.getStandardTime(date);
+        date.setMonth(date.getMonth() + num);
+        return DateFormat.getFull(date);
     }
 }
 
