@@ -1,5 +1,7 @@
 
 <script>
+    /* eslint-disable no-restricted-imports, no-restricted-modules */
+    
     const request = require.context('~/static/lib/ckeditor-5/translations', false, /\.js$/);
     request.keys().forEach(request);
     export default {
