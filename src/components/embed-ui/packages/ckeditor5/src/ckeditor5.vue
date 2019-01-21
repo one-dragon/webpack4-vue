@@ -1,100 +1,7 @@
 
 <script>
-    /* eslint-disable no-restricted-imports, no-restricted-modules */
-
-    import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor';
-
-    // 插件引入
-    import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph';
-    import Enter from '@ckeditor/ckeditor5-enter/src/enter';
-    import Typing from '@ckeditor/ckeditor5-typing/src/typing';
-    import Clipboard from '@ckeditor/ckeditor5-clipboard/src/clipboard';
-    import Undo from '@ckeditor/ckeditor5-undo/src/undo';
-
-    import Heading from '@ckeditor/ckeditor5-heading/src/heading';
-
-    import Font from '@ckeditor/ckeditor5-font/src/font';
-    import FontFamily from '@ckeditor/ckeditor5-font/src/fontfamily';
-
-    import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold';
-    import Italic from '@ckeditor/ckeditor5-basic-styles/src/italic';
-    import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline';
-    import Strikethrough from '@ckeditor/ckeditor5-basic-styles/src/strikethrough';
-    import Code from '@ckeditor/ckeditor5-basic-styles/src/code';
-    import Subscript from '@ckeditor/ckeditor5-basic-styles/src/subscript';
-    import Superscript from '@ckeditor/ckeditor5-basic-styles/src/superscript';
-
-    import List from '@ckeditor/ckeditor5-list/src/list';
-    import Alignment from '@ckeditor/ckeditor5-alignment/src/alignment';
-    import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote';
-
-    import Table from '@ckeditor/ckeditor5-table/src/table';
-    import TableToolbar from '@ckeditor/ckeditor5-table/src/tabletoolbar';
-
-    import Link from '@ckeditor/ckeditor5-link/src/link';
-    import MediaEmbed from '@ckeditor/ckeditor5-media-embed/src/mediaembed';
-
-    import Image from '@ckeditor/ckeditor5-image/src/image';
-    import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption';
-    import ImageToolbar from '@ckeditor/ckeditor5-image/src/imagetoolbar';
-    import ImageStyle from '@ckeditor/ckeditor5-image/src/imagestyle';
-    import ImageUpload from '@ckeditor/ckeditor5-image/src/imageupload';
-    import CKFinderUploadAdapter from './uploadadapter';
-
-
-    const config = {
-        // removePlugins: [ 'ImageUpload', 'EasyImage' ],
-        language: '',
-        plugins: [
-            Paragraph, Enter, Typing, Clipboard, Undo,
-            Heading,
-            Font, FontFamily,
-            Bold, Italic, Underline, Strikethrough, Code, Subscript, Superscript,
-            List, Alignment, BlockQuote,
-            Table, TableToolbar,
-            Link, MediaEmbed,
-            Image, ImageCaption, ImageToolbar, ImageStyle, ImageUpload, CKFinderUploadAdapter
-        ],
-        toolbar: [
-            'heading',
-            '|',
-            'fontSize', 'fontFamily',
-            '|',
-            'bold', 'italic', 'underline', 'strikethrough', 'code', /* 'subscript', 'superscript', */
-            '|',
-            'bulletedList', 'numberedList', 'alignment', 'blockQuote',
-            '|',
-            'insertTable',
-            '|',
-            'link', 'mediaEmbed',
-            'imageUpload',
-            '|',
-            'undo',
-            'redo'
-        ],
-        ckfinder: {
-            // eslint-disable-next-line max-len
-            uploadUrl: ''
-            // uploadUrl: 'https://cksource.com/weuy2g4ryt278ywiue/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json'
-        },
-        image: {
-            // You need to configure the image toolbar, too, so it uses the new style buttons.
-            toolbar: [ 'imageTextAlternative', '|', 'imageStyle:full', 'imageStyle:alignLeft', 'imageStyle:alignCenter', 'imageStyle:alignRight' ],
-            styles: [
-                // This option is equal to a situation where no style is applied.
-                'full',
-                // This represents an image aligned to the left.
-                'alignLeft',
-                // This represents an image aligned to the center.
-                'alignCenter',
-                // This represents an image aligned to the right.
-                'alignRight'
-            ]
-        },
-        table: {
-            contentToolbar: [ 'tableColumn', 'tableRow', 'mergeTableCells' ]
-        }
-    }
+    const request = require.context('~/static/lib/ckeditor-5/translations', false, /\.js$/);
+    request.keys().forEach(request);
     export default {
         name: 'EmCkeditor5',
         render(h) {
@@ -157,6 +64,35 @@
             }
         },
         methods: {
+            // 初始化ckeditor
+            init() {
+                // 上传图片返回格式 { uploaded: true, url: '' }
+                let config = {
+                    ckfinder: {}
+                };
+                config.ckfinder.uploadUrl = this.uploadUrl;
+                config.language = this.lang;
+                window.ClassicEditor.create(this.$el, config).then(editor => {
+                    // 获取editor的dom节点，并设置宽高
+                    let editorDom = this.$el.nextElementSibling;
+                    if(editorDom != null) {
+                        editorDom.setAttribute('data-ckeditor5-box', '');
+                        editorDom.style.width = this.width; // 设置ckeditor的宽度
+                        let editorInput = editorDom.querySelector('.ck-editor__editable');
+                        if(editorInput != null) {
+                            editorInput.style.height = this.height;
+                        }
+                    }
+                    // 把editor的实例赋值到data里
+                    this.editor = editor;
+                    this.editor.setData(this.value);
+                    this.editor.isReadOnly = this.disabled;
+                    this.$_setUpEditorEvents()
+                    this.$emit('ready', editor);
+                }).catch (err => {
+                    console.error(err);
+                })
+            },
             $_setUpEditorEvents() {
                 const editor = this.editor;
                 editor.model.document.on('change:data', e => {
@@ -176,34 +112,30 @@
             this.$emit('destroy', this.editor)
         },
         mounted() {
-            // 判断多语言包是否在window下为空对象{}
-            if(JSON.stringify(window.CKEDITOR_TRANSLATIONS) == '{}' && window.parent.CKEDITOR_TRANSLATIONS) {
-                window.CKEDITOR_TRANSLATIONS = window.parent.CKEDITOR_TRANSLATIONS
-            }
-            // 初始化ckeditor
-            // 上传图片返回格式 { uploaded: true, url: '' }
-            config.ckfinder.uploadUrl = this.uploadUrl;
-            config.language = this.lang;
-            ClassicEditor.create(this.$el, config).then(editor => {
-                // 获取editor的dom节点，并设置宽高
-                let editorDom = this.$el.nextElementSibling;
-                if(editorDom != null) {
-                    editorDom.setAttribute('data-ckeditor5-box', '');
-                    editorDom.style.width = this.width; // 设置ckeditor的宽度
-                    let editorInput = editorDom.querySelector('.ck-editor__editable');
-                    if(editorInput != null) {
-                        editorInput.style.height = this.height;
-                    }
-                }
-                // 把editor的实例赋值到data里
-                this.editor = editor;
-                this.editor.setData(this.value);
-                this.editor.isReadOnly = this.disabled;
-                this.$_setUpEditorEvents()
-                this.$emit('ready', editor);
-            }).catch (err => {
-                console.error(err);
+            // 获取html中所有script标签
+            let arrScript = document.querySelectorAll('script');
+            // 生成script对应的src值
+            let arrSrc = [];
+            Array.from(arrScript).forEach(item => {
+                arrSrc.push(item.src)
             })
+            // 判断ckeditor.js是否加载
+            let is = arrSrc.some(v => { return v.indexOf('/ckeditor-5/ckeditor.js') > -1 });
+            // 是否插入ckeditor.js
+            let script = null;
+            if(!is) {
+                script = document.createElement('script');
+                script.src = '/static/lib/ckeditor-5/ckeditor.js';
+                document.body.append(script);
+            }
+            // 判断初始化加载
+            if(script != null) {
+                script.onload = () => {
+                    this.init();
+                }
+            }else {
+                this.init();
+            }
         }
     }
 </script>

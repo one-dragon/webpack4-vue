@@ -141,6 +141,8 @@
         },
         mounted() {
             this.isMounted = true;
+            // 调整CKEditor的basePath
+            window.CKEDITOR_BASEPATH = '/static/lib/ckeditor-4.11.1/';
             // 获取html中所有script标签
             let arrScript = document.querySelectorAll('script');
             // 生成script对应的src值

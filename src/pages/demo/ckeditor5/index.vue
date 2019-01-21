@@ -90,12 +90,14 @@
                     <td>设置工具栏显示的语言</td>
                     <td>string</td>
                     <td>
-                        zh-cn/en<br />
+                        zh-cn/zh/en/de/fr/it等
+                        具体可以查看src/static/lib/ckeditor-5/translations/路径下的语言包
+                        <!-- zh-cn/en<br />
                         具体可以查看node_modules/@ckeditor/ckeditor5-core/lang/translations/路径下的语言包<br /><br />
                         如果想增加语言包，需要在config.js中加入如下配置：<br />
                         1.在plugins中的new CKEditorWebpackPlugin里的additionalLanguages添加多个语言<br />
                         2.在htmlOptions中配置加入的语言script，配置几种语言就需要加入几个script，如：&lt;script src="${host}translations/配置的语言名称.js"&gt;&lt;/script&gt;<br />
-                        3.重新启动工程即可
+                        3.重新启动工程即可 -->
                     </td>
                     <td>zh-cn</td>
                     <td>否</td>
