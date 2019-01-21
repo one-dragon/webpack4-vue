@@ -9,18 +9,13 @@
 </head>
 
 <body>
-    <div id="app" v-cloak>
-        <router-view></router-view>
-    </div>
+    <div id="app" v-cloak></div>
 
     <!--生产模式下引用Fundebug.js检测代码bug问题-->
     <%= htmlWebpackPlugin.options.jsFundebug %>
 
     <!--使用DllPlugin打包公共文件,把dll生成的js引入到html中-->
     <%= htmlWebpackPlugin.options.jsVendor %>
-    
-    <!-- 加载ckEditor5语言包 -->
-    <%= htmlWebpackPlugin.options.jsCkEditor5Languages %>
 </body>
 
 </html>

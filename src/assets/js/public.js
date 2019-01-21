@@ -2,7 +2,7 @@
  * @Author: one-dragon
  * @Date: 2018-11-14 11:00:02
  * @Last Modified by: one-dragon
- * @Last Modified time: 2019-01-19 10:46:20
+ * @Last Modified time: 2019-01-21 20:45:55
  * description: 封装公共方法
  */
 
@@ -376,13 +376,13 @@ class PromptBox {
 // 图片转为base64
 class imgSrcTo {
     // img为传入img标签dom对象，getData为回调函数返回base64串
-    static base64(img, getData) {
+    static base64(img, cb) {
         let canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, img.width, img.height);
-        getData(canvas.toDataURL())
+        if(typeof cb == 'function') cb(canvas.toDataURL());
     }
 }
 

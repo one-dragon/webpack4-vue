@@ -5,42 +5,43 @@ if (module.hot) { module.hot.accept(); }
 // 因为调用import()语法webpack会最后生成Promise语法， 所以transform-runtime解析不了， 需要先定义全局Promise语法让其解析
 window.Promise = Promise;
 
-// 加载css
+// 加载公共css
 require('~/assets/css/public');
 
-
+// 引入vue、element-ui
 import Vue from 'vue';
 import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(Element);
 
+// 引入主路由文件
 import Index from '~/pages/index';
+
+// 引入路由配置
 import router, { routes } from '~/router';
+
+// 引入i18n
 import i18n from '~/i18n';
+
+// 引入vuex
 import store from '~/store';
 
+// 引入添加vue原型链
+import '~/assets/js/vue_prototype';
 
-import '~/assets/js/ajax';// ajax加载
+// 引入添加vue全局混入
+import '~/assets/js/vue_mixin';
+
+// 引入权限加载
 import permission from '~/assets/js/permission';// 权限加载
 permission(router, routes);
 
-
+// 设置为 false 以阻止 vue 在启动时生成生产提示。
 Vue.config.productionTip = false;
 
 new Vue({
     el: '#app',
     data: {},
-    mounted() {
-        // let data = {};
-        // data.host = 'sit.cuniq.com';
-        // data.region = '/hk';
-        // data.acceptPortal = 1;
-        // data.langId = 1;
-        // this.$get( '/cq-ocms/site/detailMobile', data, (d) => {
-        // console.log('d')
-        // console.log(d)
-        // })
-    },
     router,
     i18n,
     store,
