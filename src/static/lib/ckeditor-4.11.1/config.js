@@ -47,6 +47,17 @@ CKEDITOR.editorConfig = function( config ) {
 
 
 	// config.resize_enabled = false;
+	// config.language = sessionStorage.getItem("lang");
+	// config.uiColor = '#54b0e7';
+	// config.height = 150;
+	// config.filebrowserWindowHeight = '50%';
+	// config.toolbarCanCollapse = true;
+	// config.image_previewText = ' '; //预览区域显示内容
 
+	// config.allowedContent = true;
+	// config.enterMode = CKEDITOR.ENTER_BR;
+	// config.shiftEnterMode = CKEDITOR.ENTER_P;
+	// config.startupMode = 'source';
+	// config.removeButtons = 'Flash, Iframe, About';
 	
 };
