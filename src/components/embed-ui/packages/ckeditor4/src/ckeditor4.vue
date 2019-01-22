@@ -141,8 +141,11 @@
         },
         mounted() {
             this.isMounted = true;
+            // 设置加载ckeditor路径
+            const OUTPUT_PATH = process.env.NODE_ENV == 'development' ? '/' : process.env.OUTPUT_PATH;
+            let path = OUTPUT_PATH + (OUTPUT_PATH[OUTPUT_PATH.length - 1] == '/' ? '' : '/') + 'static/lib/ckeditor-4.11.1/';
             // 调整CKEditor的basePath
-            window.CKEDITOR_BASEPATH = '/static/lib/ckeditor-4.11.1/';
+            window.CKEDITOR_BASEPATH = path;
             // 获取html中所有script标签
             let arrScript = document.querySelectorAll('script');
             // 生成script对应的src值
@@ -151,12 +154,12 @@
                 arrSrc.push(item.src)
             })
             // 判断ckeditor.js是否加载
-            let is = arrSrc.some(v => { return v.indexOf('/ckeditor-4.11.1/ckeditor.js') > -1 });
+            let is = arrSrc.some(v => { return v.indexOf(path) > -1 });
             // 是否插入ckeditor.js
             let script = null;
             if(!is) {
                 script = document.createElement('script');
-                script.src = '/static/lib/ckeditor-4.11.1/ckeditor.js';
+                script.src = path + 'ckeditor.js';
                 document.body.append(script);
             }
             // 判断初始化加载

@@ -38,6 +38,9 @@ const prodConfig = merge(baseConfig, {
 	},
     plugins: [
         
+        new webpack.DefinePlugin({
+            'process.env': { OUTPUT_PATH: '"' + (OptionsBuild.output.publicPath || '/') + '"' },
+        }),
         /*
         // webpack4开发模式下自动设置，设置全局变量，代码中也可用
         new webpack.DefinePlugin({
