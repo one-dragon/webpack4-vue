@@ -39,6 +39,7 @@ const prodConfig = merge(baseConfig, {
     plugins: [
         
         new webpack.DefinePlugin({
+            // 生成环境下设置output的publicPath常量
             'process.env': { OUTPUT_PATH: '"' + (OptionsBuild.output.publicPath || '/') + '"' },
         }),
         /*
