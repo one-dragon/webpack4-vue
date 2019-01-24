@@ -25,8 +25,11 @@
                 closeTagsData: state => state.tagsView.closeData,
                 refresh: state => state.tagsView.refresh
             }),
+            // 不能使用fullPath， 因为keep-alive根据key生成对应的缓存，fullPath可能后面会携带参数，这样会导致生成多个缓存，
+            // 无法全部清除，使用 path 生成key
             key() {
-                return this.$route.fullPath;
+                // return this.$route.fullPath;
+                return this.$route.path;
             }
         },
         watch: {
