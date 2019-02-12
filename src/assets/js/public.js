@@ -2,7 +2,7 @@
  * @Author: one-dragon
  * @Date: 2018-11-14 11:00:02
  * @Last Modified by: one-dragon
- * @Last Modified time: 2019-01-21 20:45:55
+ * @Last Modified time: 2019-02-12 19:39:16
  * description: 封装公共方法
  */
 
@@ -631,6 +631,7 @@ class DateFormat {
     }
     // 获取日期时间格式: yyyy-mm-dd hh:mm:ss
     static getFull(val) {
+        val = DateFormat.getStandardTime(val);
         let date = DateFormat.get(val);
         // 获取小时数(0-23)
         let hou = ('0' + val.getHours()).substr(-2);
@@ -640,16 +641,41 @@ class DateFormat {
         let sec = ('0' + val.getSeconds()).substr(-2);
         return `${date} ${hou}:${min}:${sec}`
     }
+    // 获取指定月份的日期时间格式: yyyy-mm-dd hh:mm:ss; 区别是不会按照日份加减到指定月份，而是直接计算加减月份，日份保持不变
+    // 例如：getFixedMonth('2019-01-31', 1) -> 2019-02-28 00:00:00
+    static getFixedMonth(date, num) {
+        date = DateFormat.getStandardTime(date);
+        let { i: integer, r: remainder } = Num.getIR(num, 12);
+        let y = date.getFullYear();
+        let m = date.getMonth() + 1;
+        let d = date.getDate();
+        let hou = ('0' + date.getHours()).substr(-2);
+        let min = ('0' + date.getMinutes()).substr(-2);
+        let sec = ('0' + date.getSeconds()).substr(-2);
+
+        y = y + integer;
+        m = (m + remainder) + (m + remainder > 12 ? -12 : m + remainder <= 0 ? 12 : 0);
+        let currCountDay = CountDay(m, y);
+        d = d > currCountDay ? currCountDay : d;
+        return `${y}-${('0' + m).substr(-2)}-${('0' + d).substr(-2)} ${hou}:${min}:${sec}`;
+    }
+    // 获取指定月份的日期时间格式: yyyy-mm-dd hh:mm:ss
+    // 例如：getSpecifiedMonth('2019-01-31', 1) -> 2019-03-03 00:00:00
+    static getSpecifiedMonth(date, num) {
+        date = DateFormat.getStandardTime(date);
+        date.setMonth(date.getMonth() + num);
+        return DateFormat.getFull(date);
+    }
     // 获取指定日份的日期时间格式: yyyy-mm-dd hh:mm:ss
     static getSpecifiedDay(date, num) {
         date = DateFormat.getStandardTime(date);
         date.setDate(date.getDate() + num);
         return DateFormat.getFull(date);
     }
-    // 获取指定月份的日期时间格式: yyyy-mm-dd hh:mm:ss
-    static getSpecifiedMonth(date, num) {
+    // 获取指定秒数的日期时间格式: yyyy-mm-dd hh:mm:ss
+    static getSpecifiedSeconds(date, num) {
         date = DateFormat.getStandardTime(date);
-        date.setMonth(date.getMonth() + num);
+        date.setSeconds(date.getSeconds() + num);
         return DateFormat.getFull(date);
     }
 }
@@ -736,6 +762,18 @@ let scrollAnimate = function (elem, direction, num, speed, cb) {
     }, 30)
 }
 
+// 操作数值的一些公共方法
+class Num {
+    // 取整和取余
+    static getIR(dividend, divisor) {
+        // dividend: 被除数； divisor: 除数
+        let i = parseInt(dividend / divisor);
+        let r = dividend % divisor;
+        // integer remainder
+        return { i, r }
+    }
+}
+
 // 操作对象的一些公共方法
 class Obj {
     // 设置对象属性
@@ -808,6 +846,7 @@ export {
     imgSrcTo,
     ScrollbarTo,
     scrollAnimate,
+    Num,
     Obj,
     Arr
 }
