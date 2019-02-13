@@ -33,68 +33,76 @@ export const routes = [
         component: LayoutDefault,
         redirect: '/svg_icon/index',
         name: 'svgicon',
-        children: [{
-            path: 'index',
-            component: () =>
-                import ( /* webpackChunkName: "svgIcon" */ '~/pages/demo/svg_icon'),
-            name: 'svg-icons',
-            meta: {
-                title: 'svg图标使用',
-                icon: 'icon',
-                noCache: false
+        children: [
+            {
+                path: 'index',
+                component: () =>
+                    import ( /* webpackChunkName: "svgIcon" */ '~/pages/demo/svg_icon'),
+                name: 'svg-icons',
+                meta: {
+                    title: 'svg图标使用',
+                    icon: 'icon',
+                    noCache: false
+                }
             }
-        }]
+        ]
     },
     {
         path: '/demo/ajax_example',
         component: LayoutDefault,
         redirect: '/demo/ajax_example/index',
         name: 'ajax',
-        children: [{
-            path: 'index',
-            component: () =>
-                import( /* webpackChunkName: "ajaxExample" */ '~/pages/demo/ajax_example'),
-            name: 'ajax-example',
-            meta: {
-                title: 'ajax使用',
-                icon: 'icon',
-                noCache: false
+        children: [
+            {
+                path: 'index',
+                component: () =>
+                    import( /* webpackChunkName: "ajaxExample" */ '~/pages/demo/ajax_example'),
+                name: 'ajax-example',
+                meta: {
+                    title: 'ajax使用',
+                    icon: 'icon',
+                    noCache: false
+                }
             }
-        }]
+        ]
     },
     {
         path: '/demo/ckeditor4',
         component: LayoutDefault,
         redirect: '/demo/ckeditor4/index',
         name: 'ckeditor4',
-        children: [{
-            path: 'index',
-            component: () =>
-                import( /* webpackChunkName: "Ckeditor4" */ '~/pages/demo/ckeditor4'),
-            name: 'ckeditor4-example',
-            meta: {
-                title: 'ckeditor4使用',
-                icon: 'icon',
-                noCache: false
+        children: [
+            {
+                path: 'index',
+                component: () =>
+                    import( /* webpackChunkName: "Ckeditor4" */ '~/pages/demo/ckeditor4'),
+                name: 'ckeditor4-example',
+                meta: {
+                    title: 'ckeditor4使用',
+                    icon: 'icon',
+                    noCache: false
+                }
             }
-        }]
+        ]
     },
     {
         path: '/demo/ckeditor5',
         component: LayoutDefault,
         redirect: '/demo/ckeditor5/index',
         name: 'ckeditor5',
-        children: [{
-            path: 'index',
-            component: () =>
-                import( /* webpackChunkName: "Ckeditor5" */ '~/pages/demo/ckeditor5'),
-            name: 'ckeditor5-example',
-            meta: {
-                title: 'ckeditor5使用',
-                icon: 'icon',
-                noCache: false
+        children: [
+            {
+                path: 'index',
+                component: () =>
+                    import( /* webpackChunkName: "Ckeditor5" */ '~/pages/demo/ckeditor5'),
+                name: 'ckeditor5-example',
+                meta: {
+                    title: 'ckeditor5使用',
+                    icon: 'icon',
+                    noCache: false
+                }
             }
-        }]
+        ]
     },
     {
         path: '/404',

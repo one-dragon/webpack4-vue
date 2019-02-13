@@ -2,7 +2,7 @@
  * @Author: one-dragon 
  * @Date: 2018-11-14 10:55:11 
  * @Last Modified by: one-dragon
- * @Last Modified time: 2018-12-11 21:26:29
+ * @Last Modified time: 2019-02-13 15:25:14
  */
 <template>
     <el-scrollbar class="sidebar_box" :class="{'hide_sidebar' : !isOpenSidebar, 'hide_text': !isShowSidebarText}" wrap-class="scrollbar_wrapper" data-common-side-bar-box>
@@ -12,65 +12,72 @@
             <div class="line"></div>
         </div>
         <ul class="menu_bar" ref="meuns">
-            <li 
-                v-if="subMenu.children"
-                v-for="(subMenu, subMenuIndex) in $store.state.sideBar.data" 
-                :key="'subMenu' + subMenuIndex" 
-                :ref="'menuLi' + subMenuIndex"
-                @mouseenter="menuItemEnter(subMenuIndex, 'menuLi' + subMenuIndex)"
-                @mouseleave="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)">
-                <!--一级菜单-->
-                <div class="submenu">
-                    <i class="el-icon-menu hidden" :title="subMenu.name"></i>
-                    <i :title="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0) ? subMenu.meta.title : subMenu.children[0].meta.title">
-                        <svg-icon 
-                            name="app"
-                            fill="#fff" 
-                            width="14" 
-                            height="14" />
-                    </i>
-                    <!-- <router-link 
-                        :to="subMenu.path" 
-                        v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">
-                        {{ subMenu.name }}
-                    </router-link>
-                    <span v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">{{ subMenu.name }}</span> -->
-                    <router-link 
-                        :to="subMenu.path == '/' ? '/' + subMenu.children[0].path : subMenu.path + '/' + subMenu.children[0].path" 
-                        v-if="subMenu.children.length == 1 && (!subMenu.children[0].children || subMenu.children[0].children.length == 0)">
-                        {{ subMenu.children[0].meta.title }}
-                    </router-link>
-                    <span v-if="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0)">{{ subMenu.meta.title }}</span>
-                </div>
-                <!--二级以上菜单-->
-                <div class="childmenu" v-if="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0)">
-                    <el-scrollbar class="childmenu_layout" style="height: 100%;">
-                        <h3>{{ subMenu.meta.title }}</h3>
-                        <div class="warp_menu" :class="subMenu.children.length == 1 ? 'column_count1' : subMenu.children.length == 2 ? 'column_count2' : 'column_count3'">
-                            <dl v-for="(childMenu, childMenuIndex) in subMenu.children" :key="'childMenu' + childMenuIndex">
-                                <dt>
-                                    <router-link 
-                                        @click.native="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)" 
-                                        :to="subMenu.path == '/' ? '/' + childMenu.path : subMenu.path + '/' + childMenu.path" 
-                                        v-if="!childMenu.children || childMenu.children.length == 0">
-                                        {{ childMenu.meta.title }}
-                                    </router-link>
-                                    <span v-if="childMenu.children && childMenu.children.length > 0">{{ childMenu.meta.title }}</span>
-                                </dt>
-                                <dd>
-                                    <router-link 
-                                        @click.native="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)"
-                                        :to="subMenu.path + '/' + childMenu.path + '/' + childMenuItem.path" 
-                                        v-for="(childMenuItem, childMenuItemIndex) in childMenu.children"
-                                        :key="'childMenuItem' + childMenuItemIndex">
-                                        {{ childMenuItem.meta.title }}
-                                    </router-link>
-                                </dd>
-                            </dl>
-                        </div>
-                    </el-scrollbar>
-                </div>
-            </li>
+            <template v-for="(subMenu, subMenuIndex) in $store.state.sideBar.data" >
+                <li 
+                    v-if="subMenu.children && (!subMenu.meta || !subMenu.meta.isHidden)"
+                    :key="'subMenu' + subMenuIndex" 
+                    :ref="'menuLi' + subMenuIndex"
+                    @mouseenter="menuItemEnter(subMenuIndex, 'menuLi' + subMenuIndex)"
+                    @mouseleave="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)">
+                    <!--一级菜单-->
+                    <div class="submenu">
+                        <i class="el-icon-menu hidden" :title="subMenu.name"></i>
+                        <i :title="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0) ? subMenu.meta.title : subMenu.children[0].meta.title">
+                            <svg-icon 
+                                name="app"
+                                fill="#fff" 
+                                width="14" 
+                                height="14" />
+                        </i>
+                        <!-- <router-link 
+                            :to="subMenu.path" 
+                            v-if="subMenu.children.length == 1 && subMenu.children[0].path == 'index'">
+                            {{ subMenu.name }}
+                        </router-link>
+                        <span v-if="subMenu.children.length > 1 || subMenu.children[0].path != 'index'">{{ subMenu.name }}</span> -->
+                        <router-link 
+                            :to="subMenu.path == '/' ? '/' + subMenu.children[0].path : subMenu.path + '/' + subMenu.children[0].path" 
+                            v-if="subMenu.children.length == 1 && (!subMenu.children[0].children || subMenu.children[0].children.length == 0)">
+                            {{ subMenu.children[0].meta.title }}
+                        </router-link>
+                        <span v-if="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0)">{{ subMenu.meta.title }}</span>
+                    </div>
+                    <!--二级以上菜单-->
+                    <div class="childmenu" v-if="subMenu.children.length > 1 || (subMenu.children[0].children && subMenu.children[0].children.length > 0)">
+                        <el-scrollbar class="childmenu_layout" style="height: 100%;">
+                            <h3>{{ subMenu.meta.title }}</h3>
+                            <div class="warp_menu" :class="subMenu.children.length == 1 ? 'column_count1' : subMenu.children.length == 2 ? 'column_count2' : 'column_count3'">
+                                <template v-for="(childMenu, childMenuIndex) in subMenu.children">
+                                    <dl v-if="!childMenu.meta || !childMenu.meta.isHidden" :key="'childMenu' + childMenuIndex">
+                                        <dt>
+                                            <router-link 
+                                                @click.native="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)" 
+                                                :to="subMenu.path == '/' ? '/' + childMenu.path : subMenu.path + '/' + childMenu.path" 
+                                                v-if="!childMenu.children || childMenu.children.length == 0">
+                                                {{ childMenu.meta.title }}
+                                            </router-link>
+                                            <span v-if="childMenu.children && childMenu.children.length > 0">{{ childMenu.meta.title }}</span>
+                                        </dt>
+
+                                        <!-- 三级菜单 -->
+                                        <dd>
+                                            <template v-for="(childMenuItem, childMenuItemIndex) in childMenu.children">
+                                                <router-link 
+                                                    v-if="!childMenuItem.meta || !childMenuItem.meta.isHidden"
+                                                    @click.native="menuItemLeave(subMenuIndex, 'menuLi' + subMenuIndex)"
+                                                    :to="subMenu.path + '/' + childMenu.path + '/' + childMenuItem.path" 
+                                                    :key="'childMenuItem' + childMenuItemIndex">
+                                                    {{ childMenuItem.meta.title }}
+                                                </router-link>
+                                            </template>
+                                        </dd>
+                                    </dl>
+                                </template>
+                            </div>
+                        </el-scrollbar>
+                    </div>
+                </li>
+            </template>
             <!--<li>
                 <div class="submenu">
                     <i class="el-icon-menu"></i>
