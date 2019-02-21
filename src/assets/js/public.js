@@ -2,7 +2,7 @@
  * @Author: one-dragon
  * @Date: 2018-11-14 11:00:02
  * @Last Modified by: one-dragon
- * @Last Modified time: 2019-02-12 19:39:16
+ * @Last Modified time: 2019-02-21 21:09:36
  * description: 封装公共方法
  */
 
@@ -725,7 +725,9 @@ class ScrollbarTo {
 }
 
 
-// 滚动条滑动缓冲动画效果 -- elem(滚动目标元素), direction('top'/'left'), num(滚动距离) 必传参数 -- speed(滚动速度), cb(滚动完成回调函数) 选填参数
+// 滚动条滑动缓冲动画效果
+// 必传参数：elem(滚动目标元素), direction('top'/'left'), num(滚动距离)
+// 选填参数：speed(滚动速度), cb(滚动完成回调函数)
 let scrollAnimate = function (elem, direction, num, speed, cb) {
     if (!elem || !direction || !String(num)) { return false; }
     // 首字母大写
@@ -735,28 +737,31 @@ let scrollAnimate = function (elem, direction, num, speed, cb) {
         cb = speed;
         speed = null;
     }
-    let timer;
+    if (window.scrollAnimateTimer != undefined) {
+        clearInterval(window.scrollAnimateTimer);
+    }
+    window.scrollAnimateTimer = undefined;
     let speeds = speed || 4;
     let isAdd = true; // 默认向右、向下滑动
     // 向左、向上滑动
     if (num < elem[`scroll${direction}`]) {
         isAdd = false;
     }
-    timer = setInterval(() => {
+    window.scrollAnimateTimer = setInterval(() => {
         // 通过元素的当前srcoll值，获取下次滚动距离，产生缓冲动画
-        let speed = Math.ceil((!isAdd ? elem[`scroll${direction}`] : (num - elem[`scroll${direction}`])) / speeds);
+        let speed = Math.ceil((!isAdd ? Math.abs(num - elem[`scroll${direction}`]) : (num - elem[`scroll${direction}`])) / speeds);
         // 获取元素下次滚动的scroll值
         let count = elem[`scroll${direction}`] + (isAdd ? speed : -speed);
         // 判断下次滚动的scroll值是否超过目标值(num值)
         if ((isAdd && count >= num) || (!isAdd && count <= num)) {
             elem[`scroll${direction}`] = num;
-            clearInterval(timer);
+            clearInterval(window.scrollAnimateTimer);
             cb ? cb() : '';
             return;
         }
         elem[`scroll${direction}`] += (isAdd ? speed : -speed);
         if (elem[`scroll${direction}`] == num) {
-            clearInterval(timer);
+            clearInterval(window.scrollAnimateTimer);
             cb ? cb() : '';
         }
     }, 30)
